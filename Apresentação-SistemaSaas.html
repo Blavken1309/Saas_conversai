@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema ConversaAI - Gestão Empresarial</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --p:#1a56db;--pd:#1e40af;--pl:#3b82f6;--plr:#93bbfd;--pbg:#eff6ff;
+            --w:#fff;--g50:#f8fafc;--g100:#f1f5f9;--g200:#e2e8f0;--g300:#cbd5e1;
+            --g400:#94a3b8;--g500:#64748b;--g600:#475569;--g700:#334155;--g800:#1e293b;--g900:#0f172a;
+            --s:#10b981;--sbg:#ecfdf5;--warn:#f59e0b;--wbg:#fffbeb;
+            --d:#ef4444;--dbg:#fef2f2;--i:#06b6d4;
+            --sw:270px;--sc:68px;--hh:60px;
+            --r:12px;--rs:8px;--rl:16px;
+            --sh:0 1px 3px rgba(0,0,0,.1);--shm:0 4px 6px rgba(0,0,0,.07);
+            --shl:0 10px 15px rgba(0,0,0,.1);--shx:0 20px 25px rgba(0,0,0,.1);
+            --t:all .3s cubic-bezier(.4,0,.2,1)
+        }
+        body{font-family:'Inter',sans-serif;background:var(--g100);color:var(--g800);overflow:hidden;height:100vh}
+
+        /* === LOGIN === */
+        .login-screen{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:url('https://cdn-bmaia.nitrocdn.com/gyReVBcepsApEAQEihChLpIgNPQZdsBV/assets/images/optimized/rev-1a6bc22/t2.com.br/wp-content/uploads/2021/10/Conheca-a-Estrutura-do-Sistema-Financeiro-Nacional.webp') center/cover no-repeat;transition:opacity .6s,transform .6s}
+        .login-screen::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(26,86,219,.85),rgba(30,64,175,.75))}
+        .login-screen.hidden{opacity:0;pointer-events:none;transform:scale(1.05)}
+        .login-card{position:relative;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);border-radius:24px;padding:44px 36px;width:400px;max-width:92vw;box-shadow:0 25px 60px rgba(0,0,0,.3);animation:loginIn .8s ease}
+        @keyframes loginIn{from{opacity:0;transform:translateY(30px) scale(.96)}to{opacity:1;transform:none}}
+        .login-logo{text-align:center;margin-bottom:28px}
+        .login-logo h1{font-size:26px;font-weight:900;color:var(--pd);letter-spacing:-1px}
+        .login-logo h1 span{font-weight:300;color:var(--pl)}
+        .login-logo p{font-size:13px;color:var(--g500);margin-top:4px}
+        .login-logo .logo-bar{width:50px;height:4px;background:linear-gradient(90deg,var(--p),var(--pl));border-radius:2px;margin:10px auto 0}
+        .lf{margin-bottom:18px}
+        .lf label{display:block;font-size:12px;font-weight:600;color:var(--g700);margin-bottom:4px}
+        .lf .iw{position:relative}
+        .lf .iw i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--g400);font-size:15px}
+        .lf input{width:100%;padding:12px 14px 12px 42px;border:2px solid var(--g200);border-radius:var(--rs);font-size:14px;font-family:'Inter',sans-serif;transition:var(--t);background:var(--g50)}
+        .lf input:focus{outline:none;border-color:var(--p);box-shadow:0 0 0 3px rgba(26,86,219,.1);background:var(--w)}
+        .login-rem{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;font-size:12px}
+        .login-rem label{display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--g600)}
+        .login-rem a{color:var(--p);text-decoration:none;font-weight:600}
+        .login-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--pd),var(--p));color:white;border:none;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:var(--t);box-shadow:0 4px 15px rgba(26,86,219,.4)}
+        .login-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(26,86,219,.5)}
+        .login-ft{text-align:center;margin-top:20px;padding-top:18px;border-top:1px solid var(--g200);font-size:11px;color:var(--g400)}
+        .login-stats{display:flex;justify-content:center;gap:20px;margin-top:16px}
+        .ls-item{text-align:center}.ls-item .num{font-size:18px;font-weight:800;color:var(--p)}.ls-item .txt{font-size:10px;color:var(--g400);margin-top:1px}
+
+        /* === APP === */
+        .app{opacity:0;transition:opacity .5s .3s}.app.vis{opacity:1}
+
+        /* === HEADER === */
+        .hdr{position:fixed;top:0;left:0;right:0;height:var(--hh);background:linear-gradient(135deg,var(--pd),var(--p),var(--pl));display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:1000;box-shadow:0 4px 20px rgba(26,86,219,.3)}
+        .hdr-l{display:flex;align-items:center;gap:14px}
+        .hdr-logo h1{color:white;font-size:19px;font-weight:800;letter-spacing:-.5px}
+        .hdr-logo h1 span{font-weight:300;opacity:.9}
+        .hdr-c{flex:1;max-width:460px;margin:0 20px}
+        .gs{position:relative}
+        .gs input{width:100%;padding:8px 12px 8px 36px;border:none;border-radius:var(--rs);font-size:12px;font-family:'Inter',sans-serif;background:rgba(255,255,255,.18);color:white;transition:var(--t)}
+        .gs input::placeholder{color:rgba(255,255,255,.55)}
+        .gs input:focus{outline:none;background:rgba(255,255,255,.95);color:var(--g800);box-shadow:0 4px 20px rgba(0,0,0,.2)}
+        .gs input:focus::placeholder{color:var(--g400)}
+        .gs>i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.55);font-size:13px;pointer-events:none;transition:var(--t)}
+        .gs input:focus~i{color:var(--g400)}
+        .gs .sk{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);padding:1px 6px;border-radius:3px;font-size:10px;color:rgba(255,255,255,.4);pointer-events:none}
+        .gs input:focus~.sk{display:none}
+        .gsr{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--w);border-radius:var(--r);box-shadow:var(--shx);border:1px solid var(--g200);display:none;z-index:1001;max-height:380px;overflow-y:auto}
+        .gsr.show{display:block;animation:fu .2s ease}
+        .gsr-s{padding:6px 0}.gsr-st{padding:6px 14px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--g400)}
+        .gsr-i{display:flex;align-items:center;gap:10px;padding:8px 14px;cursor:pointer;transition:var(--t)}
+        .gsr-i:hover{background:var(--pbg)}
+        .gsr-ic{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+        .gsr-tx h5{font-size:12px;font-weight:600;color:var(--g800)}.gsr-tx p{font-size:10px;color:var(--g400)}
+
+        .hdr-r{display:flex;align-items:center;gap:8px}
+        .branch{display:flex;align-items:center;gap:6px;padding:5px 10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:var(--rs);cursor:pointer;transition:var(--t)}
+        .branch:hover{background:rgba(255,255,255,.22)}
+        .branch i{color:rgba(255,255,255,.65);font-size:13px}
+        .branch select{background:none;border:none;color:white;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;outline:none;appearance:none;padding-right:14px}
+        .branch select option{color:var(--g800);background:white}
+        .hdr-btn{width:34px;height:34px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.13);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;transition:var(--t);position:relative;font-size:13px}
+        .hdr-btn:hover{background:rgba(255,255,255,.22)}
+        .nb{position:absolute;top:-3px;right:-3px;min-width:15px;height:15px;background:var(--d);border-radius:50%;font-size:9px;font-weight:700;color:white;display:flex;align-items:center;justify-content:center;border:2px solid var(--p);padding:0 2px}
+        .hdr-u{display:flex;align-items:center;gap:6px;padding:4px 8px 4px 4px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.13);border-radius:8px;cursor:pointer;transition:var(--t)}
+        .hdr-u:hover{background:rgba(255,255,255,.22)}
+        .hdr-u .av{width:26px;height:26px;background:rgba(255,255,255,.22);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:white;font-weight:700}
+        .hdr-u .un{color:white;font-size:11px;font-weight:600}
+        .btn-out{display:flex;align-items:center;gap:5px;padding:6px 12px;background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.25);border-radius:7px;color:white;font-size:11px;font-weight:600;cursor:pointer;transition:var(--t);font-family:'Inter',sans-serif}
+        .btn-out:hover{background:rgba(239,68,68,.35)}
+
+        /* === NOTIF DROPDOWN === */
+        .nd{position:absolute;top:calc(100% + 6px);right:0;width:320px;background:var(--w);border-radius:var(--r);box-shadow:var(--shx);border:1px solid var(--g200);display:none;z-index:1001}
+        .nd.show{display:block;animation:fu .2s ease}
+        @keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+        .nd-h{padding:12px 14px;border-bottom:1px solid var(--g200);display:flex;justify-content:space-between;align-items:center}
+        .nd-h h4{font-size:13px;font-weight:700}.nd-h a{font-size:11px;color:var(--p);text-decoration:none;font-weight:600}
+        .ni{display:flex;gap:8px;padding:10px 14px;border-bottom:1px solid var(--g100);cursor:pointer;transition:var(--t)}
+        .ni:hover{background:var(--g50)}
+        .ni-ic{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px}
+        .ni-tx h5{font-size:11px;font-weight:600;color:var(--g800)}.ni-tx p{font-size:10px;color:var(--g500);margin-top:1px}
+        .ni-t{font-size:9px;color:var(--g400);white-space:nowrap;margin-left:auto}
+
+        /* === SIDEBAR === */
+        .sb{position:fixed;top:var(--hh);left:0;bottom:0;width:var(--sw);background:var(--w);border-right:1px solid var(--g200);overflow-y:auto;overflow-x:hidden;transition:var(--t);z-index:999;display:flex;flex-direction:column}
+        .sb.c{width:var(--sc)}
+        .sb-tog{position:absolute;top:12px;right:-12px;width:24px;height:24px;background:var(--p);border:3px solid var(--w);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;font-size:9px;z-index:10;transition:var(--t);box-shadow:var(--shm)}
+        .sb-tog:hover{background:var(--pd);transform:scale(1.1)}
+        .sb.c .sb-tog i{transform:rotate(180deg)}
+        .sb-sec{padding:12px 8px 4px}
+        .sb-st{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--g400);padding:0 8px;margin-bottom:4px;white-space:nowrap;overflow:hidden}
+        .sb.c .sb-st{opacity:0;height:0;margin:0;padding:0}
+        .sb-menu{list-style:none}
+        .sb-li{margin-bottom:1px}
+        .sb-a{display:flex;align-items:center;gap:8px;padding:8px 8px;border-radius:var(--rs);color:var(--g600);text-decoration:none;font-size:12px;font-weight:500;cursor:pointer;transition:var(--t);white-space:nowrap;position:relative}
+        .sb-a:hover{background:var(--pbg);color:var(--p)}
+        .sb-a.act{background:linear-gradient(135deg,var(--p),var(--pl));color:white;box-shadow:0 4px 12px rgba(26,86,219,.3)}
+        .sb-a .ic{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:var(--rs);font-size:14px;flex-shrink:0}
+        .sb-a.act .ic{background:rgba(255,255,255,.2)}
+        .sb-a .lb{flex:1;overflow:hidden}
+        .sb.c .sb-a .lb,.sb.c .sb-a .bg,.sb.c .sb-a .ar{display:none}
+        .sb-a .bg{padding:1px 6px;border-radius:20px;font-size:9px;font-weight:700}
+        .bg-d{background:var(--dbg);color:var(--d)}
+        .bg-s{background:var(--sbg);color:var(--s)}
+        .bg-w{background:var(--wbg);color:var(--warn)}
+        .sb-sub{list-style:none;padding-left:40px;max-height:0;overflow:hidden;transition:max-height .3s ease}
+        .sb-sub.open{max-height:500px}
+        .sb.c .sb-sub{display:none}
+        .sb-sub li a{display:block;padding:6px 8px;color:var(--g500);text-decoration:none;font-size:11px;border-radius:5px;cursor:pointer;transition:var(--t);border-left:2px solid transparent}
+        .sb-sub li a:hover,.sb-sub li a.act{color:var(--p);background:var(--pbg);border-left-color:var(--p)}
+        .sb-a .ar{transition:transform .3s;font-size:10px}
+        .sb-a.exp .ar{transform:rotate(90deg)}
+        .sb-ft{margin-top:auto;padding:10px 8px;border-top:1px solid var(--g200)}
+        .sb.c .sb-ft-tx{display:none}
+        .sb.c .sb-a:hover::after{content:attr(data-tooltip);position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);background:var(--g800);color:white;padding:4px 8px;border-radius:5px;font-size:10px;font-weight:600;white-space:nowrap;z-index:100;box-shadow:var(--shl)}
+
+        /* === MAIN === */
+        .mn{margin-left:var(--sw);margin-top:var(--hh);height:calc(100vh - var(--hh));overflow-y:auto;padding:18px;transition:var(--t)}
+        .mn.exp{margin-left:var(--sc)}
+        .mp{display:none}.mp.act{display:block;animation:fi .4s ease}
+        @keyframes fi{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+        /* === PAGE HEADER === */
+        .ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+        .ph-l h2{font-size:20px;font-weight:800;color:var(--g900)}
+        .ph-l p{color:var(--g500);font-size:12px;margin-top:2px}
+        .bc{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--g400);margin-bottom:2px}
+        .bc a{color:var(--p);text-decoration:none;font-weight:500}
+        .pa{display:flex;gap:6px;flex-wrap:wrap}
+
+        /* === BUTTONS === */
+        .btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:none;transition:var(--t);white-space:nowrap;font-family:'Inter',sans-serif}
+        .btn-p{background:linear-gradient(135deg,var(--p),var(--pl));color:white;box-shadow:0 3px 10px rgba(26,86,219,.3)}
+        .btn-p:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(26,86,219,.4)}
+        .btn-sec{background:var(--w);color:var(--g700);border:1px solid var(--g300)}
+        .btn-sec:hover{background:var(--g50)}
+        .btn-suc{background:linear-gradient(135deg,#059669,var(--s));color:white;box-shadow:0 3px 10px rgba(16,185,129,.3)}
+        .btn-suc:hover{transform:translateY(-1px)}
+        .btn-dan{background:linear-gradient(135deg,#dc2626,var(--d));color:white}
+        .btn-dan:hover{transform:translateY(-1px)}
+        .btn-war{background:linear-gradient(135deg,#d97706,var(--warn));color:white}
+        .btn-inf{background:linear-gradient(135deg,#0891b2,var(--i));color:white}
+        .btn-s{padding:4px 8px;font-size:10px}
+        .btn-l{padding:11px 22px;font-size:14px}
+        .btn-ic{width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center}
+
+        /* === CARDS === */
+        .cd{background:var(--w);border-radius:var(--r);border:1px solid var(--g200);overflow:hidden;transition:var(--t)}
+        .cd:hover{box-shadow:var(--shm)}
+        .cd-h{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--g100)}
+        .cd-t{font-size:14px;font-weight:700;color:var(--g800)}
+        .cd-b{padding:18px}
+        .cd-f{padding:10px 18px;border-top:1px solid var(--g100);background:var(--g50)}
+
+        /* === STATS === */
+        .sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:18px}
+        .sc{background:var(--w);border-radius:var(--r);padding:18px;border:1px solid var(--g200);display:flex;align-items:flex-start;gap:12px;transition:var(--t);position:relative;overflow:hidden}
+        .sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+        .sc.bl::before{background:linear-gradient(90deg,var(--p),var(--pl))}
+        .sc.gr::before{background:linear-gradient(90deg,#059669,var(--s))}
+        .sc.yl::before{background:linear-gradient(90deg,#d97706,var(--warn))}
+        .sc.rd::before{background:linear-gradient(90deg,#dc2626,var(--d))}
+        .sc.cy::before{background:linear-gradient(90deg,#0891b2,var(--i))}
+        .sc.or::before{background:linear-gradient(90deg,#ea580c,#f97316)}
+        .sc:hover{transform:translateY(-2px);box-shadow:var(--shl)}
+        .si{width:44px;height:44px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+        .si.bl{background:var(--pbg);color:var(--p)}
+        .si.gr{background:var(--sbg);color:var(--s)}
+        .si.yl{background:var(--wbg);color:var(--warn)}
+        .si.rd{background:var(--dbg);color:var(--d)}
+        .si.cy{background:#ecfeff;color:var(--i)}
+        .si.or{background:#fff7ed;color:#ea580c}
+        .sn h3{font-size:24px;font-weight:800;color:var(--g900);line-height:1}
+        .sn p{font-size:11px;color:var(--g500);margin-top:2px}
+        .sch{display:inline-flex;align-items:center;gap:2px;font-size:10px;font-weight:600;padding:1px 5px;border-radius:20px;margin-top:4px}
+        .sch.up{background:var(--sbg);color:var(--s)}
+        .sch.dn{background:var(--dbg);color:var(--d)}
+
+        /* === TABLES === */
+        table{width:100%;border-collapse:collapse}
+        table thead th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--g500);background:var(--g50);border-bottom:2px solid var(--g200);white-space:nowrap}
+        table tbody td{padding:10px 12px;font-size:12px;color:var(--g700);border-bottom:1px solid var(--g100)}
+        table tbody tr{transition:var(--t)}
+        table tbody tr:hover{background:var(--pbg)}
+        .sb-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+        .sb-badge::before{content:'';width:4px;height:4px;border-radius:50%;background:currentColor}
+        .sb-badge.active{background:var(--sbg);color:var(--s)}
+        .sb-badge.pending{background:var(--wbg);color:var(--warn)}
+        .sb-badge.inactive{background:var(--dbg);color:var(--d)}
+        .sb-badge.info{background:#ecfeff;color:var(--i)}
+        .sb-badge.expiring{background:#fff7ed;color:#ea580c}
+        .exp-row{background:#fef2f2 !important}
+        .exp-row td{color:var(--d) !important}
+
+        /* === FORMS === */
+        .fg{margin-bottom:14px}
+        .fl{display:block;font-size:11px;font-weight:600;color:var(--g700);margin-bottom:3px}
+        .fc{width:100%;padding:8px 10px;border:1.5px solid var(--g300);border-radius:var(--rs);font-size:12px;font-family:'Inter',sans-serif;color:var(--g800);transition:var(--t);background:var(--w)}
+        .fc:focus{outline:none;border-color:var(--p);box-shadow:0 0 0 3px rgba(26,86,219,.1)}
+        .fc::placeholder{color:var(--g400)}
+        .fr{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+        select.fc{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");background-position:right 8px center;background-repeat:no-repeat;background-size:16px;padding-right:28px}
+        textarea.fc{min-height:70px;resize:vertical}
+        .ig{display:flex}.ig .fc{border-radius:var(--rs) 0 0 var(--rs)}
+        .ig-btn{padding:8px 12px;background:var(--p);color:white;border:none;border-radius:0 var(--rs) var(--rs) 0;cursor:pointer;font-size:12px;font-family:'Inter',sans-serif;font-weight:600}
+
+        /* === GRIDS === */
+        .g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+        .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+        .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+
+        /* === EXPIRY SYSTEM === */
+        .eab{background:linear-gradient(135deg,#fff7ed,#fed7aa);border:2px solid #fb923c;border-radius:var(--r);padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:14px;animation:pg 3s ease infinite}
+        @keyframes pg{0%,100%{box-shadow:0 0 0 0 rgba(251,146,60,.3)}50%{box-shadow:0 0 0 6px rgba(251,146,60,0)}}
+        .eab-ic{width:48px;height:48px;background:linear-gradient(135deg,#ea580c,#fb923c);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;flex-shrink:0;animation:shake 2s ease infinite}
+        @keyframes shake{0%,80%,100%{transform:rotate(0)}85%{transform:rotate(-4deg)}90%{transform:rotate(4deg)}95%{transform:rotate(-2deg)}}
+        .eab-c{flex:1}.eab-c h3{font-size:14px;font-weight:800;color:#9a3412;margin-bottom:1px}.eab-c p{font-size:12px;color:#c2410c}.eab-c p strong{font-weight:800;color:#9a3412}
+        .eab-a{display:flex;gap:6px;flex-shrink:0}
+        .ec{background:var(--w);border-radius:var(--r);border:1px solid var(--g200);overflow:hidden}
+        .ec-h{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--g100);background:linear-gradient(135deg,#fff7ed,#fef3c7)}
+        .ec-h h3{font-size:13px;font-weight:700;color:#9a3412;display:flex;align-items:center;gap:6px}
+        .ec-cnt{background:linear-gradient(135deg,#ea580c,#f97316);color:white;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700}
+        .ei{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--g100);transition:var(--t)}
+        .ei:hover{background:var(--g50)}.ei:last-child{border:none}
+        .ei-u{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;font-weight:900}
+        .ei-u.crit{background:linear-gradient(135deg,#fef2f2,#fecaca);color:var(--d);border:2px solid #fca5a5;animation:pd 1.5s ease infinite}
+        .ei-u.warn{background:linear-gradient(135deg,#fffbeb,#fde68a);color:#d97706;border:2px solid #fcd34d}
+        .ei-u.caut{background:linear-gradient(135deg,#fff7ed,#fed7aa);color:#ea580c;border:2px solid #fdba74}
+        @keyframes pd{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+        .ei-inf{flex:1}.ei-inf h4{font-size:13px;font-weight:700;color:var(--g800)}
+        .ei-m{display:flex;gap:14px;margin-top:3px;flex-wrap:wrap}
+        .ei-m span{font-size:10px;color:var(--g500);display:flex;align-items:center;gap:3px}
+        .ei-m span i{font-size:9px}
+        .ei-d{text-align:right;flex-shrink:0}
+        .ei-d .dn{font-size:20px;font-weight:900;line-height:1}
+        .ei-d .dl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+        .ei-d.crit .dn,.ei-d.crit .dl{color:var(--d)}
+        .ei-d.warn .dn,.ei-d.warn .dl{color:#d97706}
+        .ei-d.caut .dn,.ei-d.caut .dl{color:#ea580c}
+        .ei-act{display:flex;gap:4px;flex-shrink:0}
+        .ep{display:flex;align-items:center;gap:4px;margin-top:4px}
+        .ep-bar{flex:1;height:5px;background:var(--g200);border-radius:3px;overflow:hidden;max-width:110px}
+        .ep-fill{height:100%;border-radius:3px}
+        .ep-fill.crit{background:linear-gradient(90deg,#dc2626,#ef4444)}
+        .ep-fill.warn{background:linear-gradient(90deg,#d97706,#f59e0b)}
+        .ep-fill.caut{background:linear-gradient(90deg,#ea580c,#f97316)}
+        .ep-tx{font-size:9px;font-weight:700}
+        .esm{display:flex;gap:8px;margin-bottom:14px}
+        .esm-i{flex:1;background:var(--w);border:1px solid var(--g200);border-radius:var(--rs);padding:10px;text-align:center;position:relative;overflow:hidden}
+        .esm-i::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+        .esm-i.ec-r::before{background:linear-gradient(90deg,#dc2626,#ef4444)}
+        .esm-i.ec-w::before{background:linear-gradient(90deg,#d97706,#f59e0b)}
+        .esm-i.ec-c::before{background:linear-gradient(90deg,#ea580c,#f97316)}
+        .esm-i.ec-g::before{background:linear-gradient(90deg,#059669,var(--s))}
+        .esm-n{font-size:22px;font-weight:900}
+        .esm-l{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
+        .esm-i.ec-r .esm-n,.esm-i.ec-r .esm-l{color:var(--d)}
+        .esm-i.ec-w .esm-n,.esm-i.ec-w .esm-l{color:#d97706}
+        .esm-i.ec-c .esm-n,.esm-i.ec-c .esm-l{color:#ea580c}
+        .esm-i.ec-g .esm-n,.esm-i.ec-g .esm-l{color:var(--s)}
+
+        /* === PDV === */
+        .pdv{display:grid;grid-template-columns:1fr 340px;gap:14px;height:calc(100vh - var(--hh) - 100px)}
+        .pdv-l{display:flex;flex-direction:column;gap:10px}
+        .pdv-in{background:var(--w);border-radius:var(--r);padding:14px;border:1px solid var(--g200)}
+        .pdv-bc{display:flex;gap:8px;margin-bottom:10px}
+        .pdv-bc .fc{font-size:20px;padding:12px 14px;font-weight:700;letter-spacing:2px;font-family:'Courier New',monospace}
+        .pdv-pd{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px;background:var(--g50);border-radius:var(--rs)}
+        .pdv-f label{font-size:9px;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+        .pdv-f .vl{font-size:15px;font-weight:700;color:var(--g800);margin-top:1px}
+        .pdv-il{flex:1;background:var(--w);border-radius:var(--r);border:1px solid var(--g200);overflow:hidden;display:flex;flex-direction:column}
+        .pdv-ih{padding:10px 14px;background:var(--pbg);border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between}
+        .pdv-ih h3{font-size:13px;font-weight:700;color:var(--pd)}
+        .pdv-ib{flex:1;overflow-y:auto}
+        .pdv-ir{display:grid;grid-template-columns:36px 1fr 60px 80px 80px 28px;align-items:center;padding:8px 12px;gap:8px;border-bottom:1px solid var(--g100);transition:var(--t)}
+        .pdv-ir:hover{background:var(--g50)}
+        .is{width:26px;height:26px;background:var(--pbg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--p)}
+        .in{font-weight:600;font-size:12px}.in small{display:block;color:var(--g400);font-weight:400;font-size:10px}
+        .ip,.it{font-weight:700;text-align:right;font-size:12px}.it{color:var(--p)}
+        .ir{width:24px;height:24px;border:none;background:var(--dbg);color:var(--d);border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;transition:var(--t)}
+        .ir:hover{background:var(--d);color:white}
+        .pdv-sk{background:var(--w);border-radius:var(--r);border:1px solid var(--g200);padding:8px 12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+        .skt{display:flex;align-items:center;gap:3px;padding:3px 8px;background:var(--g100);border-radius:5px;font-size:10px;font-weight:600;color:var(--g600)}
+        .skt kbd{background:var(--g200);padding:0 4px;border-radius:2px;font-size:9px;font-weight:700;font-family:'Inter',sans-serif}
+        .pdv-ab{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;background:var(--w);border-radius:var(--r);padding:10px;border:1px solid var(--g200)}
+        .pdv-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:var(--rs);border:2px solid var(--g200);background:var(--w);cursor:pointer;transition:var(--t);font-family:'Inter',sans-serif}
+        .pdv-btn i{font-size:16px}.pdv-btn span{font-size:9px;font-weight:600;text-align:center}
+        .pdv-btn.ad{border-color:#fecaca;color:var(--d)}.pdv-btn.ad:hover{background:var(--dbg)}
+        .pdv-btn.aw{border-color:#fde68a;color:var(--warn)}.pdv-btn.aw:hover{background:var(--wbg)}
+        .pdv-btn.ai{border-color:#a5f3fc;color:var(--i)}.pdv-btn.ai:hover{background:#ecfeff}
+        .pdv-btn.ap{border-color:var(--plr);color:var(--p)}.pdv-btn.ap:hover{background:var(--pbg)}
+        .pdv-btn.as{border-color:#86efac;color:var(--s)}.pdv-btn.as:hover{background:var(--sbg)}
+        .pdv-r{display:flex;flex-direction:column;gap:10px}
+        .pdv-tot{background:var(--w);border-radius:var(--r);border:1px solid var(--g200);overflow:hidden}
+        .pdv-th{padding:14px;background:linear-gradient(135deg,var(--pd),var(--p));color:white}
+        .pdv-th h3{font-size:11px;font-weight:600;opacity:.8;text-transform:uppercase;letter-spacing:.5px}
+        .pdv-th .tv{font-size:34px;font-weight:900;margin-top:2px}
+        .pdv-tb{padding:14px}
+        .pdv-tr{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--g100)}
+        .pdv-tr:last-child{border:none}.pdv-tr .lb{font-size:11px;color:var(--g500)}.pdv-tr .vl{font-weight:700;font-size:13px}
+        .pdv-pa{background:var(--w);border-radius:var(--r);border:1px solid var(--g200);padding:14px}
+        .pdv-pa h4{font-size:12px;font-weight:700;margin-bottom:8px;color:var(--g700)}
+        .pm{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+        .pmb{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 6px;border:2px solid var(--g200);border-radius:var(--rs);background:var(--w);cursor:pointer;transition:var(--t);font-family:'Inter',sans-serif}
+        .pmb:hover,.pmb.sel{border-color:var(--p);background:var(--pbg)}
+        .pmb i{font-size:18px;color:var(--p)}.pmb span{font-size:10px;font-weight:600;color:var(--g600)}
+        .pdv-tc{background:var(--g50);border-radius:var(--rs);padding:10px;margin-top:8px}
+        .tc-r{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}.tc-r:last-child{margin:0}
+        .tc-r label{font-size:10px;color:var(--g500);font-weight:600}
+        .tc-v{font-weight:800;font-size:15px}
+        .pdv-fin{width:100%;padding:14px;background:linear-gradient(135deg,#059669,var(--s));color:white;border:none;border-radius:var(--r);font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:var(--t);box-shadow:0 4px 15px rgba(16,185,129,.4);font-family:'Inter',sans-serif}
+        .pdv-fin:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(16,185,129,.5)}
+
+        /* === PRICE CHECK === */
+        .pcc{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:55vh;text-align:center}
+        .pcb{background:var(--w);border-radius:var(--rl);padding:40px 36px;width:100%;max-width:560px;border:1px solid var(--g200);box-shadow:var(--shl)}
+        .pcb .pci{width:70px;height:70px;background:var(--pbg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px;color:var(--p)}
+        .pcb h2{font-size:22px;font-weight:800;margin-bottom:4px}
+        .pcb>p{color:var(--g500);margin-bottom:20px;font-size:13px}
+        .pcb .pc-in{display:flex;gap:10px;margin-bottom:20px}
+        .pcb .pc-in .fc{font-size:18px;padding:14px;text-align:center;font-weight:700;letter-spacing:3px;font-family:'Courier New',monospace}
+        .pr{background:var(--g50);border-radius:var(--r);padding:20px;display:none}
+        .pr.show{display:block;animation:fi .3s ease}
+        .pr .prn{font-size:18px;font-weight:800;color:var(--g900)}
+        .pr .prc{font-size:12px;color:var(--g400);margin-top:1px;font-family:monospace}
+        .pr .prp{font-size:42px;font-weight:900;color:var(--p);margin:12px 0}
+        .pr .prs{font-size:13px;color:var(--g600)}
+        .pr .prd{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:16px;padding-top:16px;border-top:1px solid var(--g200)}
+        .pr .prdi label{font-size:10px;color:var(--g400);text-transform:uppercase;font-weight:600}
+        .pr .prdi span{display:block;font-size:14px;font-weight:700;color:var(--g800);margin-top:1px}
+
+        /* === QUICK ACTIONS === */
+        .qa{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px}
+        .qac{background:var(--w);border:1px solid var(--g200);border-radius:var(--r);padding:14px;text-align:center;cursor:pointer;transition:var(--t)}
+        .qac:hover{transform:translateY(-2px);box-shadow:var(--shl);border-color:var(--plr)}
+        .qai{width:44px;height:44px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:20px}
+        .qac h4{font-size:12px;font-weight:700;color:var(--g800);margin-bottom:1px}
+        .qac p{font-size:10px;color:var(--g400)}
+
+        /* === FINANCE === */
+        .fs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:18px}
+        .fsc{background:var(--w);border-radius:var(--r);padding:18px;border:1px solid var(--g200)}
+        .fch{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+        .fct{font-size:12px;font-weight:600;color:var(--g500)}
+        .fcv{font-size:26px;font-weight:800}
+        .fcs{font-size:11px;color:var(--g400);margin-top:3px}
+        .fsc.inc .fcv{color:var(--s)}.fsc.exp .fcv{color:var(--d)}.fsc.bal .fcv{color:var(--p)}
+
+        /* === ACTIVITY === */
+        .al{list-style:none}
+        .ai{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--g100)}.ai:last-child{border:none}
+        .ad{width:7px;height:7px;border-radius:50%;margin-top:4px;flex-shrink:0}
+        .ad.bl{background:var(--p)}.ad.gr{background:var(--s)}.ad.yl{background:var(--warn)}.ad.rd{background:var(--d)}.ad.or{background:#ea580c}
+        .ac h4{font-size:12px;font-weight:600;color:var(--g800)}.ac p{font-size:11px;color:var(--g500);margin-top:1px}
+        .at{margin-left:auto;font-size:10px;color:var(--g400);white-space:nowrap}
+
+        /* === PROGRESS === */
+        .pb{width:100%;height:6px;background:var(--g200);border-radius:3px;overflow:hidden}
+        .pf{height:100%;border-radius:3px;transition:width .5s ease}
+        .pf.bl{background:linear-gradient(90deg,var(--p),var(--pl))}
+        .pf.gr{background:linear-gradient(90deg,#059669,var(--s))}
+        .pf.rd{background:linear-gradient(90deg,#dc2626,var(--d))}
+
+        /* === MULTI-LOJA === */
+        .sr{display:grid;gap:10px}
+        .src{background:var(--w);border:1px solid var(--g200);border-radius:var(--r);padding:14px;display:flex;align-items:center;gap:14px;transition:var(--t)}
+        .src:hover{box-shadow:var(--shm)}
+        .rp{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0}
+        .ri{flex:1}.ri h4{font-size:13px;font-weight:700}.ri p{font-size:11px;color:var(--g500)}
+        .rv{text-align:right}.rv h3{font-size:18px;font-weight:800;color:var(--p)}.rv span{font-size:10px;color:var(--g400)}
+        .tf{display:flex;align-items:center;gap:14px;margin:16px 0}
+        .tb{flex:1;background:var(--w);border:2px solid var(--g200);border-radius:var(--r);padding:16px;text-align:center}
+        .tb.ab{border-color:var(--p);background:var(--pbg)}
+        .ta{font-size:24px;color:var(--p);flex-shrink:0}
+
+        /* === REPORTS === */
+        .rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+        .rc{background:var(--w);border:1px solid var(--g200);border-radius:var(--r);padding:14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:var(--t)}
+        .rc:hover{border-color:var(--p);box-shadow:var(--shm);transform:translateX(2px)}
+        .rci{width:38px;height:38px;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+        .rcn h4{font-size:12px;font-weight:700}.rcn p{font-size:10px;color:var(--g400);margin-top:1px}
+        .rca{margin-left:auto;color:var(--g300);transition:var(--t)}
+        .rc:hover .rca{color:var(--p);transform:translateX(2px)}
+
+        /* === FISCAL === */
+        .fcg{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+        .ftc{background:var(--w);border:2px solid var(--g200);border-radius:var(--r);padding:18px;text-align:center;cursor:pointer;transition:var(--t)}
+        .ftc:hover{border-color:var(--p);transform:translateY(-2px);box-shadow:var(--shm)}
+        .fti{width:48px;height:48px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 8px}
+        .ftc h4{font-weight:700;font-size:13px}.ftc p{font-size:10px;color:var(--g400)}
+
+        /* === OS === */
+        .osc{background:var(--w);border:1px solid var(--g200);border-radius:var(--r);padding:14px;margin-bottom:10px;transition:var(--t)}
+        .osc:hover{box-shadow:var(--shm)}
+        .osh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+        .osn{font-size:14px;font-weight:800;color:var(--p)}
+        .osb{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+        .osf label{font-size:9px;text-transform:uppercase;color:var(--g400);font-weight:600;letter-spacing:.5px}
+        .osf p{font-size:12px;font-weight:600;color:var(--g800);margin-top:1px}
+        .osft{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--g100)}
+
+        /* === CONFIG === */
+        .cfs{background:var(--w);border-radius:var(--r);border:1px solid var(--g200);margin-bottom:12px}
+        .cfh{padding:14px 18px;border-bottom:1px solid var(--g100);display:flex;align-items:center;gap:8px}
+        .cfh i{font-size:14px;color:var(--p)}.cfh h3{font-size:14px;font-weight:700}
+        .cfi{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--g100)}
+        .cfi:last-child{border:none}
+        .cin h4{font-size:12px;font-weight:600}.cin p{font-size:10px;color:var(--g400);margin-top:1px}
+        .sw{position:relative;display:inline-block;width:38px;height:20px}
+        .sw input{opacity:0;width:0;height:0}
+        .sw .sl{position:absolute;cursor:pointer;inset:0;background:var(--g300);border-radius:20px;transition:var(--t)}
+        .sw .sl::before{content:'';position:absolute;width:14px;height:14px;left:3px;bottom:3px;background:white;border-radius:50%;transition:var(--t)}
+        .sw input:checked+.sl{background:var(--p)}
+        .sw input:checked+.sl::before{transform:translateX(18px)}
+
+        /* === CLIENTS === */
+        .clg{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+        .clc{background:var(--w);border:1px solid var(--g200);border-radius:var(--r);padding:14px;transition:var(--t)}
+        .clc:hover{box-shadow:var(--shm)}
+        .clh{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+        .cla{width:38px;height:38px;border-radius:50%;background:var(--pbg);color:var(--p);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+        .cln h4{font-size:13px;font-weight:700}.cln p{font-size:10px;color:var(--g400)}
+        .cld{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+        .cldi{font-size:10px}.cldi label{color:var(--g400);display:block}.cldi span{color:var(--g700);font-weight:600}
+        .clca{display:flex;gap:4px;margin-top:10px;padding-top:10px;border-top:1px solid var(--g100)}
+
+        /* === EMPLOYEE === */
+        .emc{background:var(--w);border:1px solid var(--g200);border-radius:var(--r);padding:14px;display:flex;align-items:center;gap:12px;transition:var(--t);margin-bottom:8px}
+        .emc:hover{box-shadow:var(--shm)}
+        .ema{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--pbg),#dbeafe);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--p);flex-shrink:0}
+
+        /* === MINI CALENDAR === */
+        .mcal{background:var(--w);border-radius:var(--r);border:1px solid var(--g200);padding:14px}
+        .mcal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.mcal-h h4{font-size:13px;font-weight:700}
+        .mcal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+        .mcal-dn{font-size:9px;font-weight:600;color:var(--g400);padding:3px}
+        .mcal-d{font-size:11px;padding:5px;border-radius:5px;cursor:pointer;transition:var(--t);font-weight:500;color:var(--g600)}
+        .mcal-d:hover{background:var(--pbg);color:var(--p)}
+        .mcal-d.today{background:var(--p);color:white;font-weight:700}
+        .mcal-d.oth{color:var(--g300)}
+        .mcal-d.ev::after{content:'';display:block;width:3px;height:3px;background:var(--d);border-radius:50%;margin:1px auto 0}
+
+        /* === CHART === */
+        .cb{display:flex;align-items:flex-end;gap:5px;height:160px;padding:14px}
+        .cbr{flex:1;border-radius:5px 5px 0 0;position:relative;transition:var(--t);cursor:pointer;min-width:20px}
+        .cbr:hover{opacity:.8}
+        .cbr .brl{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--g500);font-weight:600;white-space:nowrap}
+        .cbr .brv{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--g700);font-weight:700;white-space:nowrap}
+
+        /* === TABS === */
+        .tabs{display:flex;gap:2px;background:var(--g100);border-radius:var(--rs);padding:2px;margin-bottom:14px;flex-wrap:wrap}
+        .tab{padding:6px 14px;border:none;background:none;border-radius:5px;font-size:11px;font-weight:600;color:var(--g500);cursor:pointer;transition:var(--t);font-family:'Inter',sans-serif}
+        .tab.act{background:var(--w);color:var(--p);box-shadow:var(--sh)}
+        .tab:hover:not(.act){color:var(--g700)}
+
+        /* === SEARCH === */
+        .sbar{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+        .siw{flex:1;position:relative}
+        .siw>i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--g400)}
+        .siw .fc{padding-left:34px}
+
+        /* === MODAL === */
+        .mo{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:2000}
+        .mo.act{display:flex}
+        .mdl{background:var(--w);border-radius:var(--rl);width:90%;max-width:600px;max-height:90vh;overflow:hidden;box-shadow:var(--shx);animation:mi .3s ease}
+        @keyframes mi{from{opacity:0;transform:scale(.96) translateY(16px)}to{opacity:1;transform:none}}
+        .mdl-h{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--g200)}
+        .mdl-h h3{font-size:15px;font-weight:700}
+        .mdl-c{width:30px;height:30px;border:none;background:var(--g100);border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--g500);transition:var(--t)}
+        .mdl-c:hover{background:var(--dbg);color:var(--d)}
+        .mdl-b{padding:18px;overflow-y:auto;max-height:55vh}
+        .mdl-f{padding:12px 18px;border-top:1px solid var(--g200);display:flex;justify-content:flex-end;gap:6px}
+
+        /* === TOAST === */
+        .tc{position:fixed;bottom:16px;right:16px;z-index:3000;display:flex;flex-direction:column;gap:6px}
+        .tst{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--w);border-radius:var(--rs);box-shadow:var(--shx);border-left:4px solid var(--s);animation:ti .4s ease;min-width:280px}
+        .tst.ts{border-left-color:var(--s)}.tst.te{border-left-color:var(--d)}.tst.tw{border-left-color:var(--warn)}.tst.tif{border-left-color:var(--p)}
+        @keyframes ti{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+        .tst .tic{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+        .tst .ttx{flex:1;font-size:12px;font-weight:500;color:var(--g700)}
+        .tst .tcl{background:none;border:none;color:var(--g400);cursor:pointer;font-size:12px;padding:3px}
+
+        /* === RESPONSIVE === */
+        @media(max-width:1200px){.pdv{grid-template-columns:1fr 300px}.fs{grid-template-columns:1fr}}
+        @media(max-width:768px){.sb{width:var(--sc)}.sb .sb-st,.sb .sb-a .lb,.sb .sb-a .bg,.sb .sb-a .ar,.sb .sb-sub{display:none}.mn{margin-left:var(--sc)}.pdv{grid-template-columns:1fr;height:auto}.g2,.g3{grid-template-columns:1fr}.sg{grid-template-columns:1fr 1fr}.ph{flex-direction:column;align-items:flex-start}.hdr-c,.branch{display:none}}
+        ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--g300);border-radius:2px}
+    </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="ls">
+    <div class="login-card">
+        <div class="login-logo"><h1>Sistema <span>ConversaAI</span></h1><div class="logo-bar"></div><p>Gestão Empresarial Inteligente</p></div>
+        <form onsubmit="doLogin(event)">
+            <div class="lf"><label>Usuário</label><div class="iw"><i class="fas fa-user"></i><input type="text" placeholder="Digite seu usuário"></div></div>
+            <div class="lf"><label>Senha</label><div class="iw"><i class="fas fa-lock"></i><input type="password" placeholder="Digite sua senha"></div></div>
+            <div class="login-rem"><label><input type="checkbox" checked> Lembrar</label><a href="#">Esqueci a senha</a></div>
+            <button type="submit" class="login-btn"><i class="fas fa-sign-in-alt" style="margin-right:5px"></i>Entrar no Sistema</button>
+        </form>
+        <div class="login-ft"><p>© 2025 ConversaAI</p><div class="login-stats"><div class="ls-item"><div class="num">1.247</div><div class="txt">Empresas</div></div><div class="ls-item"><div class="num">50K+</div><div class="txt">Vendas/dia</div></div><div class="ls-item"><div class="num">99.9%</div><div class="txt">Uptime</div></div></div></div>
+    </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+
+<!-- HEADER -->
+<header class="hdr">
+    <div class="hdr-l"><div class="hdr-logo"><h1>Sistema <span>ConversaAI</span></h1></div></div>
+    <div class="hdr-c"><div class="gs"><input type="text" placeholder="Buscar produtos, clientes..." id="gsi" onkeyup="gss(this.value)" onfocus="this.parentElement.querySelector('.sk').style.display='none'" onblur="setTimeout(()=>{document.getElementById('gsrr').classList.remove('show');this.parentElement.querySelector('.sk').style.display=''},200)"><i class="fas fa-search"></i><span class="sk">Ctrl+K</span><div class="gsr" id="gsrr"><div class="gsr-s"><div class="gsr-st">Produtos</div><div class="gsr-i" onclick="nav('produtos')"><div class="gsr-ic" style="background:var(--pbg);color:var(--p)"><i class="fas fa-box"></i></div><div class="gsr-tx"><h5>Arroz Tipo 1 5kg</h5><p>R$ 24,90 • 150 un.</p></div></div><div class="gsr-i" onclick="nav('validade')"><div class="gsr-ic" style="background:#fff7ed;color:#ea580c"><i class="fas fa-clock"></i></div><div class="gsr-tx"><h5>Leite Integral 1L ⚠️</h5><p>Vence em 3 dias</p></div></div></div><div class="gsr-s" style="border-top:1px solid var(--g100)"><div class="gsr-st">Ações</div><div class="gsr-i" onclick="nav('pdv')"><div class="gsr-ic" style="background:var(--wbg);color:var(--warn)"><i class="fas fa-cash-register"></i></div><div class="gsr-tx"><h5>Abrir PDV</h5><p>Nova venda</p></div></div><div class="gsr-i" onclick="nav('consulta-preco')"><div class="gsr-ic" style="background:#ecfeff;color:var(--i)"><i class="fas fa-search-dollar"></i></div><div class="gsr-tx"><h5>Consulta Preço</h5><p>Verificar preço</p></div></div></div></div></div></div>
+    <div class="hdr-r">
+        <div class="branch"><i class="fas fa-store"></i><select onchange="chBranch(this.value)"><option value="all">Todas</option><option value="l1" selected>Loja Centro</option><option value="l2">Loja Shopping</option><option value="l3">Loja Bairro</option></select></div>
+        <div class="hdr-btn" onclick="togNotif()" style="position:relative"><i class="fas fa-bell"></i><span class="nb">6</span>
+            <div class="nd" id="ndd"><div class="nd-h"><h4>Notificações</h4><a href="#">Ler todas</a></div>
+                <div class="ni"><div class="ni-ic" style="background:#fff7ed;color:#ea580c"><i class="fas fa-clock"></i></div><div class="ni-tx"><h5>⚠️ Produtos vencendo!</h5><p>8 vencem em 7 dias</p></div><span class="ni-t">Agora</span></div>
+                <div class="ni"><div class="ni-ic" style="background:var(--dbg);color:var(--d)"><i class="fas fa-skull-crossbones"></i></div><div class="ni-tx"><h5>🚨 3 VENCIDOS</h5><p>Retirar imediatamente</p></div><span class="ni-t">1min</span></div>
+                <div class="ni"><div class="ni-ic" style="background:var(--sbg);color:var(--s)"><i class="fas fa-check-circle"></i></div><div class="ni-tx"><h5>Venda #1045</h5><p>R$ 1.250,00</p></div><span class="ni-t">5min</span></div>
+                <div class="ni"><div class="ni-ic" style="background:var(--wbg);color:var(--warn)"><i class="fas fa-exclamation-triangle"></i></div><div class="ni-tx"><h5>Estoque baixo</h5><p>Feijão 1kg — 5 un.</p></div><span class="ni-t">15min</span></div>
+            </div>
+        </div>
+        <div class="hdr-u"><div class="av">AD</div><span class="un">Admin</span></div>
+        <button class="btn-out" onclick="doOut()"><i class="fas fa-sign-out-alt"></i>Sair</button>
+    </div>
+</header>
+
+<!-- SIDEBAR -->
+<nav class="sb" id="sb">
+    <div class="sb-tog" onclick="togSb()"><i class="fas fa-chevron-left"></i></div>
+    <div class="sb-sec"><div class="sb-st">Principal</div><ul class="sb-menu"><li class="sb-li"><a class="sb-a act" data-tooltip="Dashboard" onclick="nav('dashboard',this)"><span class="ic"><i class="fas fa-th-large"></i></span><span class="lb">Dashboard</span></a></li></ul></div>
+    <div class="sb-sec"><div class="sb-st">Vendas</div><ul class="sb-menu"><li class="sb-li"><a class="sb-a" data-tooltip="PDV" onclick="nav('pdv',this)"><span class="ic"><i class="fas fa-cash-register"></i></span><span class="lb">PDV - Caixa</span><span class="bg bg-s">Aberto</span></a></li><li class="sb-li"><a class="sb-a" data-tooltip="Consulta" onclick="nav('consulta-preco',this)"><span class="ic"><i class="fas fa-search-dollar"></i></span><span class="lb">Consulta Preço</span></a></li><li class="sb-li"><a class="sb-a" data-tooltip="Pedidos" onclick="nav('pedidos',this)"><span class="ic"><i class="fas fa-shopping-bag"></i></span><span class="lb">Pedidos</span><span class="bg bg-w">3</span></a></li></ul></div>
+    <div class="sb-sec"><div class="sb-st">Estoque</div><ul class="sb-menu"><li class="sb-li"><a class="sb-a" data-tooltip="Estoque" onclick="togSub(this,'es')"><span class="ic"><i class="fas fa-boxes-stacked"></i></span><span class="lb">Estoque</span><span class="bg bg-d">8</span><i class="fas fa-chevron-right ar"></i></a><ul class="sb-sub" id="es"><li><a onclick="nav('produtos')">Produtos</a></li><li><a onclick="nav('validade')">⚠️ Validades</a></li><li><a onclick="nav('servicos')">Serviços</a></li><li><a onclick="nav('entrada')">Entrada Produtos</a></li><li><a onclick="nav('categorias')">Categorias</a></li></ul></li></ul></div>
+    <div class="sb-sec"><div class="sb-st">Cadastros</div><ul class="sb-menu"><li class="sb-li"><a class="sb-a" data-tooltip="Clientes" onclick="nav('clientes',this)"><span class="ic"><i class="fas fa-users"></i></span><span class="lb">Clientes</span></a></li><li class="sb-li"><a class="sb-a" data-tooltip="Fornecedores" onclick="nav('fornecedores',this)"><span class="ic"><i class="fas fa-truck"></i></span><span class="lb">Fornecedores</span></a></li></ul></div>
+    <div class="sb-sec"><div class="sb-st">Financeiro</div><ul class="sb-menu"><li class="sb-li"><a class="sb-a" data-tooltip="Financeiro" onclick="togSub(this,'fn')"><span class="ic"><i class="fas fa-wallet"></i></span><span class="lb">Financeiro</span><span class="bg bg-d">5</span><i class="fas fa-chevron-right ar"></i></a><ul class="sb-sub" id="fn"><li><a onclick="nav('contas-pagar')">Contas a Pagar</a></li><li><a onclick="nav('contas-receber')">Contas a Receber</a></li><li><a onclick="nav('fluxo')">Fluxo de Caixa</a></li></ul></li></ul></div>
+    <div class="sb-sec"><div class="sb-st">Serviços</div><ul class="sb-menu"><li class="sb-li"><a class="sb-a" data-tooltip="OS" onclick="nav('os',this)"><span class="ic"><i class="fas fa-tools"></i></span><span class="lb">Ordem Serviço</span><span class="bg bg-w">2</span></a></li></ul></div>
+    <div class="sb-sec"><div class="sb-st">Fiscal</div><ul class="sb-menu"><li class="sb-li"><a class="sb-a" data-tooltip="Fiscal" onclick="nav('fiscal',this)"><span class="ic"><i class="fas fa-file-contract"></i></span><span class="lb">Módulo Fiscal</span></a></li></ul></div>
+    <div class="sb-sec"><div class="sb-st">Multi-Loja</div><ul class="sb-menu"><li class="sb-li"><a class="sb-a" data-tooltip="Multi-Loja" onclick="nav('multi-loja',this)"><span class="ic"><i class="fas fa-store"></i></span><span class="lb">Multi-Loja</span></a></li></ul></div>
+    <div class="sb-sec"><div class="sb-st">Análises</div><ul class="sb-menu"><li class="sb-li"><a class="sb-a" data-tooltip="Relatórios" onclick="nav('relatorios',this)"><span class="ic"><i class="fas fa-chart-pie"></i></span><span class="lb">Relatórios</span></a></li></ul></div>
+    <div class="sb-sec"><div class="sb-st">RH</div><ul class="sb-menu"><li class="sb-li"><a class="sb-a" data-tooltip="RH" onclick="nav('rh',this)"><span class="ic"><i class="fas fa-id-badge"></i></span><span class="lb">Colaboradores</span></a></li></ul></div>
+    <div class="sb-sec"><div class="sb-st">Sistema</div><ul class="sb-menu"><li class="sb-li"><a class="sb-a" data-tooltip="Config" onclick="nav('config',this)"><span class="ic"><i class="fas fa-gear"></i></span><span class="lb">Configurações</span></a></li></ul></div>
+    <div class="sb-ft"><div class="sb-a" style="cursor:default;opacity:.4"><span class="ic"><i class="fas fa-circle-info"></i></span><span class="lb sb-ft-tx" style="font-size:10px">v2.6.0 © 2025</span></div></div>
+</nav>
+
+<!-- MAIN -->
+<main class="mn" id="mn">
+
+<!-- DASHBOARD -->
+<div class="mp act" id="p-dashboard">
+    <div class="ph"><div class="ph-l"><div class="bc"><a href="#">Home</a><i class="fas fa-chevron-right" style="font-size:8px"></i>Dashboard</div><h2>Painel de Controle</h2><p>Visão geral — <span id="cbn" style="font-weight:600;color:var(--p)">Loja Centro</span></p></div><div class="pa"><button class="btn btn-sec"><i class="fas fa-download"></i>Exportar</button><button class="btn btn-p" onclick="nav('pdv')"><i class="fas fa-plus"></i>Nova Venda</button></div></div>
+    <div class="eab"><div class="eab-ic"><i class="fas fa-exclamation-triangle"></i></div><div class="eab-c"><h3>⚠️ Produtos Próximos ao Vencimento!</h3><p><strong>3 vencidos</strong> e <strong>8 produtos</strong> vencem em 30 dias. Prejuízo estimado: <strong style="color:#dc2626">R$ 847,50</strong></p></div><div class="eab-a"><button class="btn btn-war" onclick="nav('validade')"><i class="fas fa-eye"></i>Ver</button><button class="btn btn-sec" onclick="this.closest('.eab').style.display='none'"><i class="fas fa-times"></i></button></div></div>
+    <div class="sg"><div class="sc bl"><div class="si bl"><i class="fas fa-dollar-sign"></i></div><div class="sn"><h3>R$ 48.350</h3><p>Vendas Hoje</p><span class="sch up"><i class="fas fa-arrow-up"></i>12.5%</span></div></div><div class="sc gr"><div class="si gr"><i class="fas fa-shopping-cart"></i></div><div class="sn"><h3>156</h3><p>Pedidos</p><span class="sch up"><i class="fas fa-arrow-up"></i>8.2%</span></div></div><div class="sc yl"><div class="si yl"><i class="fas fa-box"></i></div><div class="sn"><h3>2.847</h3><p>Estoque</p><span class="sch dn"><i class="fas fa-arrow-down"></i>3.1%</span></div></div><div class="sc rd"><div class="si or"><i class="fas fa-clock"></i></div><div class="sn"><h3>11</h3><p>Alerta Validade</p><span class="sch dn"><i class="fas fa-exclamation"></i>Urgente</span></div></div></div>
+    <div class="qa"><div class="qac" onclick="nav('pdv')"><div class="qai" style="background:var(--pbg);color:var(--p)"><i class="fas fa-cash-register"></i></div><h4>PDV</h4><p>Nova venda</p></div><div class="qac" onclick="nav('consulta-preco')"><div class="qai" style="background:#ecfeff;color:var(--i)"><i class="fas fa-search-dollar"></i></div><h4>Consultar Preço</h4><p>Verificar</p></div><div class="qac" onclick="nav('validade')" style="border-color:#fb923c;background:#fffbf0"><div class="qai" style="background:#fff7ed;color:#ea580c"><i class="fas fa-calendar-xmark"></i></div><h4 style="color:#ea580c">Validades ⚠️</h4><p>11 alertas</p></div><div class="qac" onclick="openMdl('mp')"><div class="qai" style="background:var(--sbg);color:var(--s)"><i class="fas fa-plus-circle"></i></div><h4>Novo Produto</h4><p>Cadastrar</p></div><div class="qac" onclick="nav('multi-loja')"><div class="qai" style="background:var(--pbg);color:var(--p)"><i class="fas fa-store"></i></div><h4>Multi-Loja</h4><p>Gerenciar</p></div></div>
+    <div class="g2" style="margin-top:16px">
+        <div class="cd"><div class="cd-h"><span class="cd-t">Vendas da Semana</span></div><div class="cd-b"><div class="cb" style="margin-bottom:24px"><div class="cbr" style="height:60%;background:linear-gradient(to top,var(--p),var(--pl))"><span class="brv">R$5.2k</span><span class="brl">Seg</span></div><div class="cbr" style="height:80%;background:linear-gradient(to top,var(--p),var(--pl))"><span class="brv">R$7.8k</span><span class="brl">Ter</span></div><div class="cbr" style="height:45%;background:linear-gradient(to top,var(--p),var(--pl))"><span class="brv">R$4.1k</span><span class="brl">Qua</span></div><div class="cbr" style="height:90%;background:linear-gradient(to top,var(--p),var(--pl))"><span class="brv">R$9.3k</span><span class="brl">Qui</span></div><div class="cbr" style="height:70%;background:linear-gradient(to top,var(--p),var(--pl))"><span class="brv">R$6.5k</span><span class="brl">Sex</span></div><div class="cbr" style="height:100%;background:linear-gradient(to top,var(--s),#34d399)"><span class="brv">R$12k</span><span class="brl">Sáb</span></div><div class="cbr" style="height:35%;background:linear-gradient(to top,var(--g400),var(--g300))"><span class="brv">R$3.4k</span><span class="brl">Dom</span></div></div></div></div>
+        <div class="ec"><div class="ec-h"><h3><i class="fas fa-calendar-xmark"></i>Alertas de Validade</h3><span class="ec-cnt">11</span></div><div class="ei"><div class="ei-u crit"><i class="fas fa-skull-crossbones"></i></div><div class="ei-inf"><h4>Iogurte Natural 170g</h4><div class="ei-m"><span><i class="fas fa-box"></i>23 un.</span><span><i class="fas fa-tag"></i>R$ 3,49</span></div></div><div class="ei-d crit"><div class="dn">VENC.</div><div class="dl">12/01</div></div></div><div class="ei"><div class="ei-u crit"><i class="fas fa-exclamation"></i></div><div class="ei-inf"><h4>Leite Integral 1L</h4><div class="ei-m"><span><i class="fas fa-box"></i>45 un.</span></div></div><div class="ei-d crit"><div class="dn">3</div><div class="dl">dias</div></div></div><div class="ei"><div class="ei-u warn"><i class="fas fa-clock"></i></div><div class="ei-inf"><h4>Pão de Forma Integral</h4><div class="ei-m"><span><i class="fas fa-box"></i>18 un.</span></div></div><div class="ei-d warn"><div class="dn">7</div><div class="dl">dias</div></div></div><div class="ei"><div class="ei-u caut"><i class="fas fa-hourglass-half"></i></div><div class="ei-inf"><h4>Queijo Mussarela 500g</h4><div class="ei-m"><span><i class="fas fa-box"></i>12 un.</span></div></div><div class="ei-d caut"><div class="dn">15</div><div class="dl">dias</div></div></div><div style="padding:10px 18px;text-align:center;border-top:1px solid var(--g100)"><a href="#" onclick="nav('validade');return false" style="color:#ea580c;font-size:12px;font-weight:700;text-decoration:none">Ver todos →</a></div></div>
+    </div>
+    <div class="g2" style="margin-top:16px"><div class="cd"><div class="cd-h"><span class="cd-t">Atividades</span></div><div class="cd-b" style="padding:0 18px"><ul class="al"><li class="ai"><span class="ad or"></span><div class="ac"><h4>⚠️ 3 produtos vencidos</h4><p>Retirar do estoque</p></div><span class="at">Agora</span></li><li class="ai"><span class="ad gr"></span><div class="ac"><h4>Venda #1045</h4><p>R$ 1.250,00</p></div><span class="at">5min</span></li><li class="ai"><span class="ad yl"></span><div class="ac"><h4>Leite vence em 3 dias</h4><p>45 unidades</p></div><span class="at">30min</span></li><li class="ai"><span class="ad bl"></span><div class="ac"><h4>NF-e #5678 autorizada</h4><p>R$ 8.750</p></div><span class="at">1h</span></li></ul></div></div>
+    <div class="cd"><div class="cd-h"><span class="cd-t">Top Produtos</span></div><div class="cd-b" style="padding:0"><table><thead><tr><th>#</th><th>Produto</th><th>Vendas</th><th>Receita</th></tr></thead><tbody><tr><td>1</td><td><strong>Arroz 5kg</strong></td><td>342</td><td><strong>R$ 8.550</strong></td></tr><tr><td>2</td><td><strong>Feijão 1kg</strong></td><td>289</td><td><strong>R$ 2.312</strong></td></tr><tr><td>3</td><td><strong>Óleo 900ml</strong></td><td>256</td><td><strong>R$ 2.048</strong></td></tr><tr><td>4</td><td><strong>Açúcar 1kg</strong></td><td>198</td><td><strong>R$ 990</strong></td></tr></tbody></table></div></div></div>
+</div>
+
+<!-- VALIDADE -->
+<div class="mp" id="p-validade">
+    <div class="ph"><div class="ph-l"><div class="bc"><a href="#" onclick="nav('dashboard')">Home</a><i class="fas fa-chevron-right" style="font-size:8px"></i>Controle de Validade</div><h2><i class="fas fa-calendar-xmark" style="color:#ea580c;margin-right:6px"></i>Controle de Validade</h2><p>Evite perdas monitorando vencimentos</p></div><div class="pa"><button class="btn btn-sec"><i class="fas fa-download"></i>Exportar</button><button class="btn btn-war"><i class="fas fa-print"></i>Imprimir</button></div></div>
+    <div class="eab"><div class="eab-ic"><i class="fas fa-exclamation-triangle"></i></div><div class="eab-c"><h3>🚨 Ação Imediata!</h3><p><strong>3 VENCIDOS</strong> — retirar do estoque. <strong>8 próximos.</strong> Prejuízo: <strong style="color:#dc2626">R$ 847,50</strong></p></div><div class="eab-a"><button class="btn btn-dan"><i class="fas fa-trash"></i>Baixa nos Vencidos</button></div></div>
+    <div class="esm"><div class="esm-i ec-r"><div class="esm-n">3</div><div class="esm-l">🚨 Vencidos</div></div><div class="esm-i ec-r"><div class="esm-n">2</div><div class="esm-l">1-3 dias</div></div><div class="esm-i ec-w"><div class="esm-n">3</div><div class="esm-l">4-7 dias</div></div><div class="esm-i ec-c"><div class="esm-n">3</div><div class="esm-l">8-30 dias</div></div><div class="esm-i ec-g"><div class="esm-n">2.836</div><div class="esm-l">✅ OK</div></div></div>
+    <div class="tabs"><button class="tab act">Todos (11)</button><button class="tab">🚨 Vencidos (3)</button><button class="tab">⚠️ 1-3d (2)</button><button class="tab">⏰ 4-7d (3)</button><button class="tab">📋 8-30d (3)</button></div>
+    <div class="ec" style="margin-bottom:16px;border-color:#fca5a5"><div class="ec-h" style="background:linear-gradient(135deg,#fef2f2,#fecaca)"><h3 style="color:#dc2626"><i class="fas fa-skull-crossbones"></i>VENCIDOS</h3><span class="ec-cnt" style="background:#dc2626">3</span></div><div class="ei" style="background:#fef2f2"><div class="ei-u crit"><i class="fas fa-skull-crossbones"></i></div><div class="ei-inf"><h4 style="color:var(--d)">Iogurte Natural 170g</h4><div class="ei-m"><span><i class="fas fa-barcode"></i>7891234560001</span><span><i class="fas fa-box"></i>23 un.</span><span><i class="fas fa-dollar-sign"></i>Perda: <strong style="color:var(--d)">R$ 80,27</strong></span></div><div class="ep"><div class="ep-bar"><div class="ep-fill crit" style="width:100%"></div></div><span class="ep-tx" style="color:var(--d)">Venceu há 3 dias</span></div></div><div class="ei-d crit"><div class="dn">-3</div><div class="dl">dias</div></div><div class="ei-act"><button class="btn btn-s btn-dan" onclick="toast('Produto removido','tw')"><i class="fas fa-trash"></i></button></div></div><div class="ei" style="background:#fef2f2"><div class="ei-u crit"><i class="fas fa-skull-crossbones"></i></div><div class="ei-inf"><h4 style="color:var(--d)">Presunto Fatiado 200g</h4><div class="ei-m"><span><i class="fas fa-box"></i>15 un.</span><span>Perda: <strong style="color:var(--d)">R$ 193,50</strong></span></div></div><div class="ei-d crit"><div class="dn">-1</div><div class="dl">dia</div></div><div class="ei-act"><button class="btn btn-s btn-dan"><i class="fas fa-trash"></i></button></div></div><div class="ei" style="background:#fef2f2"><div class="ei-u crit"><i class="fas fa-skull-crossbones"></i></div><div class="ei-inf"><h4 style="color:var(--d)">Cream Cheese 150g</h4><div class="ei-m"><span><i class="fas fa-box"></i>8 un.</span><span>Perda: <strong style="color:var(--d)">R$ 71,20</strong></span></div></div><div class="ei-d crit"><div class="dn">0</div><div class="dl">hoje</div></div><div class="ei-act"><button class="btn btn-s btn-dan"><i class="fas fa-trash"></i></button></div></div></div>
+    <div class="ec" style="margin-bottom:16px"><div class="ec-h" style="background:linear-gradient(135deg,#fef2f2,#fed7aa)"><h3 style="color:#dc2626"><i class="fas fa-exclamation-circle"></i>CRÍTICO — 1 a 3 dias</h3><span class="ec-cnt">2</span></div><div class="ei"><div class="ei-u crit"><i class="fas fa-exclamation"></i></div><div class="ei-inf"><h4>Leite Integral 1L</h4><div class="ei-m"><span><i class="fas fa-box"></i>45 un.</span><span><i class="fas fa-tag"></i>R$ 5,49</span><span><i class="fas fa-store"></i>Centro</span></div><div class="ep"><div class="ep-bar"><div class="ep-fill crit" style="width:90%"></div></div><span class="ep-tx" style="color:var(--d)">18/01/25</span></div></div><div class="ei-d crit"><div class="dn">3</div><div class="dl">dias</div></div><div class="ei-act"><button class="btn btn-s btn-war"><i class="fas fa-percent"></i></button></div></div><div class="ei"><div class="ei-u crit"><i class="fas fa-exclamation"></i></div><div class="ei-inf"><h4>Margarina 500g</h4><div class="ei-m"><span><i class="fas fa-box"></i>30 un.</span><span><i class="fas fa-store"></i>Shopping</span></div><div class="ep"><div class="ep-bar"><div class="ep-fill crit" style="width:95%"></div></div><span class="ep-tx" style="color:var(--d)">17/01/25</span></div></div><div class="ei-d crit"><div class="dn">2</div><div class="dl">dias</div></div><div class="ei-act"><button class="btn btn-s btn-war"><i class="fas fa-percent"></i></button></div></div></div>
+    <div class="ec" style="margin-bottom:16px"><div class="ec-h"><h3 style="color:#d97706"><i class="fas fa-clock"></i>ATENÇÃO — 4 a 7 dias</h3><span class="ec-cnt" style="background:#d97706">3</span></div><div class="ei"><div class="ei-u warn"><i class="fas fa-clock"></i></div><div class="ei-inf"><h4>Pão de Forma</h4><div class="ei-m"><span><i class="fas fa-box"></i>18 un.</span></div><div class="ep"><div class="ep-bar"><div class="ep-fill warn" style="width:75%"></div></div><span class="ep-tx" style="color:#d97706">22/01</span></div></div><div class="ei-d warn"><div class="dn">7</div><div class="dl">dias</div></div></div><div class="ei"><div class="ei-u warn"><i class="fas fa-clock"></i></div><div class="ei-inf"><h4>Requeijão 200g</h4><div class="ei-m"><span><i class="fas fa-box"></i>25 un.</span></div></div><div class="ei-d warn"><div class="dn">5</div><div class="dl">dias</div></div></div><div class="ei"><div class="ei-u warn"><i class="fas fa-clock"></i></div><div class="ei-inf"><h4>Salsicha 500g</h4><div class="ei-m"><span><i class="fas fa-box"></i>40 un.</span></div></div><div class="ei-d warn"><div class="dn">6</div><div class="dl">dias</div></div></div></div>
+    <div class="ec"><div class="ec-h"><h3 style="color:#ea580c"><i class="fas fa-hourglass-half"></i>MONITORAR — 8 a 30 dias</h3><span class="ec-cnt" style="background:#ea580c">3</span></div><div class="ei"><div class="ei-u caut"><i class="fas fa-hourglass-half"></i></div><div class="ei-inf"><h4>Queijo Mussarela 500g</h4><div class="ei-m"><span><i class="fas fa-box"></i>12 un.</span></div></div><div class="ei-d caut"><div class="dn">15</div><div class="dl">dias</div></div></div><div class="ei"><div class="ei-u caut"><i class="fas fa-hourglass-half"></i></div><div class="ei-inf"><h4>Manteiga 200g</h4><div class="ei-m"><span><i class="fas fa-box"></i>20 un.</span></div></div><div class="ei-d caut"><div class="dn">21</div><div class="dl">dias</div></div></div><div class="ei"><div class="ei-u caut"><i class="fas fa-hourglass-half"></i></div><div class="ei-inf"><h4>Achocolatado 400g</h4><div class="ei-m"><span><i class="fas fa-box"></i>35 un.</span></div></div><div class="ei-d caut"><div class="dn">26</div><div class="dl">dias</div></div></div></div>
+</div>
+
+<!-- PDV -->
+<div class="mp" id="p-pdv">
+    <div class="ph"><div class="ph-l"><h2><i class="fas fa-cash-register" style="color:var(--p);margin-right:5px"></i>PDV</h2><p>Caixa #01 — <span style="color:var(--s);font-weight:600">● Aberto</span></p></div><div class="pa"><button class="btn btn-war"><i class="fas fa-lock-open"></i>Abrir</button><button class="btn btn-dan"><i class="fas fa-lock"></i>Fechar</button></div></div>
+    <div class="pdv-sk"><span style="font-size:10px;font-weight:700;color:var(--g500)">ATALHOS:</span><div class="skt"><kbd>F2</kbd>Cliente</div><div class="skt"><kbd>F4</kbd>Desconto</div><div class="skt"><kbd>F7</kbd>Consulta</div><div class="skt"><kbd>F9</kbd>Cancelar</div><div class="skt"><kbd>F10</kbd>Fiado</div><div class="skt"><kbd>F12</kbd>Finalizar</div></div>
+    <div class="pdv" style="margin-top:10px">
+        <div class="pdv-l">
+            <div class="pdv-in"><div class="pdv-bc"><input type="text" class="fc" placeholder="🔍 Código ou nome..." id="bi" autofocus><button class="btn btn-p btn-l"><i class="fas fa-barcode"></i></button></div><div class="pdv-pd"><div class="pdv-f"><label>Produto</label><div class="vl">Arroz Tipo 1 5kg</div></div><div class="pdv-f"><label>Preço</label><div class="vl" style="color:var(--p)">R$ 24,90</div></div><div class="pdv-f"><label>Qtd</label><div class="vl"><input type="number" value="1" min="1" style="width:60px;padding:4px;border:2px solid var(--g300);border-radius:5px;font-size:14px;font-weight:700;text-align:center;font-family:'Inter'"></div></div></div></div>
+            <div class="pdv-il"><div class="pdv-ih"><h3><i class="fas fa-list" style="margin-right:5px"></i>Itens</h3><span style="font-size:11px;color:var(--g500)">5 itens</span></div><div class="pdv-ib"><div class="pdv-ir" style="background:var(--g50);font-weight:700;font-size:10px;color:var(--g500)"><span>#</span><span>PRODUTO</span><span style="text-align:right">QTD</span><span style="text-align:right">UNIT.</span><span style="text-align:right">TOTAL</span><span></span></div><div class="pdv-ir"><span class="is">1</span><span class="in">Arroz 5kg<small>7891234567890</small></span><span style="text-align:right;font-weight:600">2</span><span class="ip">R$ 24,90</span><span class="it">R$ 49,80</span><button class="ir"><i class="fas fa-times"></i></button></div><div class="pdv-ir"><span class="is">2</span><span class="in">Feijão 1kg<small>7891234567891</small></span><span style="text-align:right;font-weight:600">3</span><span class="ip">R$ 8,00</span><span class="it">R$ 24,00</span><button class="ir"><i class="fas fa-times"></i></button></div><div class="pdv-ir"><span class="is">3</span><span class="in">Óleo 900ml<small>7891234567892</small></span><span style="text-align:right;font-weight:600">1</span><span class="ip">R$ 7,99</span><span class="it">R$ 7,99</span><button class="ir"><i class="fas fa-times"></i></button></div><div class="pdv-ir"><span class="is">4</span><span class="in">Macarrão 500g<small>7891234567893</small></span><span style="text-align:right;font-weight:600">5</span><span class="ip">R$ 4,50</span><span class="it">R$ 22,50</span><button class="ir"><i class="fas fa-times"></i></button></div><div class="pdv-ir"><span class="is">5</span><span class="in">Açúcar 1kg<small>7891234567894</small></span><span style="text-align:right;font-weight:600">2</span><span class="ip">R$ 5,49</span><span class="it">R$ 10,98</span><button class="ir"><i class="fas fa-times"></i></button></div></div></div>
+            <div class="pdv-ab"><button class="pdv-btn ad"><i class="fas fa-ban"></i><span>Cancelar Item</span></button><button class="pdv-btn ad"><i class="fas fa-trash-can"></i><span>Cancelar Venda</span></button><button class="pdv-btn ai" onclick="nav('consulta-preco')"><i class="fas fa-search-dollar"></i><span>Consultar</span></button><button class="pdv-btn ap"><i class="fas fa-boxes-stacked"></i><span>Produtos</span></button><button class="pdv-btn aw"><i class="fas fa-percent"></i><span>Desconto</span></button><button class="pdv-btn as"><i class="fas fa-hand-holding-dollar"></i><span>Fiado</span></button></div>
+        </div>
+        <div class="pdv-r">
+            <div class="pdv-tot"><div class="pdv-th"><h3>TOTAL</h3><div class="tv">R$ 115,27</div></div><div class="pdv-tb"><div class="pdv-tr"><span class="lb">Subtotal</span><span class="vl">R$ 115,27</span></div><div class="pdv-tr"><span class="lb">Desconto</span><span class="vl" style="color:var(--s)">-R$ 0,00</span></div><div class="pdv-tr"><span class="lb">Itens/Qtd</span><span class="vl">5/13</span></div></div></div>
+            <div class="pdv-pa"><h4><i class="fas fa-credit-card" style="margin-right:5px;color:var(--p)"></i>Pagamento</h4><div class="pm"><button class="pmb sel"><i class="fas fa-money-bill-wave"></i><span>Dinheiro</span></button><button class="pmb"><i class="fas fa-credit-card"></i><span>Crédito</span></button><button class="pmb"><i class="fas fa-credit-card"></i><span>Débito</span></button><button class="pmb"><i class="fab fa-pix"></i><span>PIX</span></button></div><div class="pdv-tc"><div class="tc-r"><label>Recebido:</label><input type="text" style="width:100px;padding:4px;border:2px solid var(--g300);border-radius:5px;font-size:14px;font-weight:700;text-align:right;font-family:'Inter'" value="150,00" oninput="cTroco(this.value)"></div><div class="tc-r"><label>Troco:</label><span class="tc-v" id="tv" style="color:var(--s)">R$ 34,73</span></div></div></div>
+            <button class="pdv-fin" onclick="finSale()"><i class="fas fa-check-circle"></i>FINALIZAR (F12)</button>
+        </div>
+    </div>
+</div>
+
+<!-- CONSULTA PREÇO -->
+<div class="mp" id="p-consulta-preco">
+    <div class="ph"><div class="ph-l"><h2>Consulta de Preço</h2></div></div>
+    <div class="pcc"><div class="pcb"><div class="pci"><i class="fas fa-search-dollar"></i></div><h2>Consulta de Preço</h2><p>Digite o código de barras ou nome</p><div class="pc-in"><input type="text" class="fc" placeholder="Código..." id="pci"><button class="btn btn-p btn-l" onclick="chkPrice()"><i class="fas fa-search"></i>Consultar</button></div><div class="pr" id="prr"><div class="prn">Arroz Tipo 1 - 5kg</div><div class="prc">7891234567890</div><div class="prp">R$ 24,90</div><div class="prs"><i class="fas fa-check-circle" style="color:var(--s)"></i> 150 un. • <span style="color:var(--s);font-weight:600">Validade: 15/06/2025 ✅</span></div><div class="prd"><div class="prdi"><label>Categoria</label><span>Alimentos</span></div><div class="prdi"><label>Atacado 10+</label><span style="color:var(--s)">R$ 22,90</span></div><div class="prdi"><label>Validade</label><span>15/06/25</span></div></div></div></div></div>
+</div>
+
+<!-- PRODUTOS -->
+<div class="mp" id="p-produtos">
+    <div class="ph"><div class="ph-l"><h2>Produtos</h2></div><div class="pa"><button class="btn btn-war" onclick="nav('validade')"><i class="fas fa-calendar-xmark"></i>Validades (11)</button><button class="btn btn-p" onclick="openMdl('mp')"><i class="fas fa-plus"></i>Novo</button></div></div>
+    <div class="sg"><div class="sc bl"><div class="si bl"><i class="fas fa-box"></i></div><div class="sn"><h3>2.847</h3><p>Total</p></div></div><div class="sc gr"><div class="si gr"><i class="fas fa-check-circle"></i></div><div class="sn"><h3>2.541</h3><p>Ativos</p></div></div><div class="sc yl"><div class="si yl"><i class="fas fa-exclamation-triangle"></i></div><div class="sn"><h3>42</h3><p>Estoque Baixo</p></div></div><div class="sc or"><div class="si or"><i class="fas fa-calendar-xmark"></i></div><div class="sn"><h3>11</h3><p>Alerta Validade</p></div></div></div>
+    <div class="eab" style="margin-bottom:14px;padding:10px 14px"><div class="eab-ic" style="width:38px;height:38px;font-size:16px"><i class="fas fa-clock"></i></div><div class="eab-c"><h3 style="font-size:13px">⚠️ 11 produtos com alerta de validade</h3><p style="font-size:11px">3 vencidos • 2 críticos • 6 atenção</p></div><div class="eab-a"><button class="btn btn-s btn-war" onclick="nav('validade')"><i class="fas fa-eye"></i>Ver</button></div></div>
+    <div class="cd"><div class="cd-h"><span class="cd-t">Lista</span></div><div class="cd-b" style="padding:0"><table><thead><tr><th>Cód</th><th>Produto</th><th>Estoque</th><th>Venda</th><th>Validade</th><th>Status</th><th>Ações</th></tr></thead><tbody><tr class="exp-row"><td>#001</td><td><strong>🚨 Iogurte 170g</strong></td><td>23</td><td>R$ 3,49</td><td><strong>12/01 VENCIDO</strong></td><td><span class="sb-badge inactive">Vencido</span></td><td><button class="btn btn-s btn-dan"><i class="fas fa-trash"></i></button></td></tr><tr><td>#002</td><td><strong>⚠️ Leite 1L</strong></td><td>45</td><td>R$ 5,49</td><td><strong style="color:var(--d)">18/01 (3d)</strong></td><td><span class="sb-badge expiring">3d</span></td><td><button class="btn btn-s btn-war"><i class="fas fa-percent"></i></button></td></tr><tr><td>#003</td><td><strong>Arroz 5kg</strong></td><td>150</td><td>R$ 24,90</td><td>15/06 (152d)</td><td><span class="sb-badge active">OK</span></td><td><button class="btn btn-s btn-sec"><i class="fas fa-edit"></i></button></td></tr><tr><td>#004</td><td><strong>Feijão 1kg</strong></td><td style="color:var(--warn)">5</td><td>R$ 8,00</td><td>20/08 (218d)</td><td><span class="sb-badge active">OK</span></td><td><button class="btn btn-s btn-sec"><i class="fas fa-edit"></i></button></td></tr><tr><td>#005</td><td><strong>⏰ Pão Forma</strong></td><td>18</td><td>R$ 8,99</td><td><strong style="color:#d97706">22/01 (7d)</strong></td><td><span class="sb-badge pending">7d</span></td><td><button class="btn btn-s btn-war"><i class="fas fa-percent"></i></button></td></tr></tbody></table></div></div>
+</div>
+
+<!-- SERVIÇOS -->
+<div class="mp" id="p-servicos"><div class="ph"><div class="ph-l"><h2>Serviços</h2></div><div class="pa"><button class="btn btn-p"><i class="fas fa-plus"></i>Novo</button></div></div><div class="cd"><div class="cd-b" style="padding:0"><table><thead><tr><th>Cód</th><th>Serviço</th><th>Tempo</th><th>Preço</th><th>Status</th></tr></thead><tbody><tr><td>#S001</td><td><strong>Manutenção Preventiva</strong></td><td>2h</td><td>R$ 150</td><td><span class="sb-badge active">Ativo</span></td></tr><tr><td>#S002</td><td><strong>Instalação Elétrica</strong></td><td>4h</td><td>R$ 350</td><td><span class="sb-badge active">Ativo</span></td></tr></tbody></table></div></div></div>
+
+<!-- ENTRADA -->
+<div class="mp" id="p-entrada"><div class="ph"><div class="ph-l"><h2>Entrada de Produtos</h2></div><div class="pa"><button class="btn btn-p"><i class="fas fa-plus"></i>Nova</button></div></div><div class="cd"><div class="cd-b" style="padding:0"><table><thead><tr><th>NF</th><th>Fornecedor</th><th>Data</th><th>Total</th><th>Status</th></tr></thead><tbody><tr><td><strong>#NF-4521</strong></td><td>ABC Distribuidora</td><td>15/01</td><td><strong>R$ 12.350</strong></td><td><span class="sb-badge active">Conferida</span></td></tr><tr><td><strong>#NF-4520</strong></td><td>XYZ Alimentos</td><td>14/01</td><td><strong>R$ 8.750</strong></td><td><span class="sb-badge pending">Pendente</span></td></tr></tbody></table></div></div></div>
+
+<!-- CATEGORIAS -->
+<div class="mp" id="p-categorias"><div class="ph"><div class="ph-l"><h2>Categorias</h2></div></div><div class="g4"><div class="qac"><div class="qai" style="background:var(--pbg);color:var(--p)"><i class="fas fa-utensils"></i></div><h4>Alimentos</h4><p>1.245</p></div><div class="qac"><div class="qai" style="background:var(--sbg);color:var(--s)"><i class="fas fa-spray-can-sparkles"></i></div><h4>Limpeza</h4><p>356</p></div><div class="qac"><div class="qai" style="background:var(--wbg);color:var(--warn)"><i class="fas fa-cheese"></i></div><h4>Laticínios</h4><p>178</p></div><div class="qac"><div class="qai" style="background:var(--dbg);color:var(--d)"><i class="fas fa-wine-bottle"></i></div><h4>Bebidas</h4><p>478</p></div></div></div>
+
+<!-- CLIENTES -->
+<div class="mp" id="p-clientes"><div class="ph"><div class="ph-l"><h2>Clientes</h2></div><div class="pa"><button class="btn btn-p"><i class="fas fa-user-plus"></i>Novo</button></div></div><div class="sg"><div class="sc bl"><div class="si bl"><i class="fas fa-users"></i></div><div class="sn"><h3>1.234</h3><p>Total</p></div></div><div class="sc gr"><div class="si gr"><i class="fas fa-user-check"></i></div><div class="sn"><h3>1.189</h3><p>Ativos</p></div></div><div class="sc cy"><div class="si cy"><i class="fas fa-user-clock"></i></div><div class="sn"><h3>28</h3><p>Novos mês</p></div></div></div><div class="clg"><div class="clc"><div class="clh"><div class="cla">JS</div><div class="cln"><h4>João Silva</h4><p>123.456.789-00</p></div><span class="sb-badge active" style="margin-left:auto">Ativo</span></div><div class="cld"><div class="cldi"><label>Tel</label><span>(11)99999-8888</span></div><div class="cldi"><label>Compras</label><span style="color:var(--p)">R$ 12.450</span></div></div><div class="clca"><button class="btn btn-s btn-sec" style="flex:1"><i class="fas fa-edit"></i>Editar</button><button class="btn btn-s btn-p" style="flex:1"><i class="fas fa-shopping-bag"></i>Vendas</button></div></div><div class="clc"><div class="clh"><div class="cla">MC</div><div class="cln"><h4>Maria Costa</h4><p>987.654.321-00</p></div><span class="sb-badge active" style="margin-left:auto">Ativo</span></div><div class="cld"><div class="cldi"><label>Tel</label><span>(11)98765-4321</span></div><div class="cldi"><label>Compras</label><span style="color:var(--p)">R$ 8.920</span></div></div><div class="clca"><button class="btn btn-s btn-sec" style="flex:1"><i class="fas fa-edit"></i>Editar</button><button class="btn btn-s btn-p" style="flex:1"><i class="fas fa-shopping-bag"></i>Vendas</button></div></div></div></div>
+
+<!-- FORNECEDORES -->
+<div class="mp" id="p-fornecedores"><div class="ph"><div class="ph-l"><h2>Fornecedores</h2></div></div><div class="cd"><div class="cd-b" style="padding:0"><table><thead><tr><th>Cód</th><th>Razão Social</th><th>CNPJ</th><th>Cidade</th><th>Status</th></tr></thead><tbody><tr><td>#F001</td><td><strong>ABC Distribuidora</strong></td><td>12.345.678/0001-99</td><td>São Paulo</td><td><span class="sb-badge active">Ativo</span></td></tr><tr><td>#F002</td><td><strong>XYZ Alimentos</strong></td><td>98.765.432/0001-11</td><td>Rio de Janeiro</td><td><span class="sb-badge active">Ativo</span></td></tr></tbody></table></div></div></div>
+
+<!-- CONTAS A PAGAR -->
+<div class="mp" id="p-contas-pagar"><div class="ph"><div class="ph-l"><h2>Contas a Pagar</h2></div><div class="pa"><button class="btn btn-p"><i class="fas fa-plus"></i>Nova</button></div></div><div class="fs"><div class="fsc exp"><div class="fch"><span class="fct">Total a Pagar</span></div><div class="fcv">R$ 28.450</div><div class="fcs">12 pendentes</div></div><div class="fsc" style="border-left:4px solid var(--warn)"><div class="fch"><span class="fct">Vencendo Hoje</span></div><div class="fcv" style="color:var(--warn)">R$ 5.200</div></div><div class="fsc" style="border-left:4px solid var(--d)"><div class="fch"><span class="fct">Vencidas</span></div><div class="fcv" style="color:var(--d)">R$ 3.800</div></div></div><div class="cd"><div class="cd-b" style="padding:0"><table><thead><tr><th>Descrição</th><th>Fornecedor</th><th>Venc.</th><th>Valor</th><th>Ações</th></tr></thead><tbody><tr><td><strong>NF #4521</strong></td><td>ABC Distribuidora</td><td>15/01</td><td><strong>R$ 12.350</strong></td><td><button class="btn btn-s btn-suc"><i class="fas fa-check"></i>Pagar</button></td></tr><tr><td><strong>Aluguel</strong></td><td>Imobiliária</td><td style="color:var(--d)">10/01</td><td><strong>R$ 3.800</strong></td><td><button class="btn btn-s btn-suc"><i class="fas fa-check"></i>Pagar</button></td></tr><tr><td><strong>Energia</strong></td><td>CPFL</td><td>20/01</td><td><strong>R$ 1.250</strong></td><td><button class="btn btn-s btn-suc"><i class="fas fa-check"></i>Pagar</button></td></tr></tbody></table></div></div></div>
+
+<!-- CONTAS A RECEBER -->
+<div class="mp" id="p-contas-receber"><div class="ph"><div class="ph-l"><h2>Contas a Receber</h2></div></div><div class="fs"><div class="fsc inc"><div class="fch"><span class="fct">Total</span></div><div class="fcv">R$ 42.780</div><div class="fcs">18 títulos</div></div><div class="fsc" style="border-left:4px solid var(--s)"><div class="fch"><span class="fct">Recebido Mês</span></div><div class="fcv" style="color:var(--s)">R$ 65.200</div></div><div class="fsc" style="border-left:4px solid var(--d)"><div class="fch"><span class="fct">Inadimplentes</span></div><div class="fcv" style="color:var(--d)">R$ 8.950</div><div class="fcs">5 clientes</div></div></div><div class="cd"><div class="cd-b" style="padding:0"><table><thead><tr><th>Descrição</th><th>Cliente</th><th>Venc.</th><th>Valor</th><th>Ações</th></tr></thead><tbody><tr><td><strong>Venda #1040</strong></td><td>João Silva</td><td>18/01</td><td><strong>R$ 2.450</strong></td><td><button class="btn btn-s btn-suc"><i class="fas fa-check"></i>Receber</button></td></tr><tr><td><strong>Venda #1035</strong></td><td>Maria Costa</td><td style="color:var(--d)">12/01</td><td><strong>R$ 3.200</strong></td><td><button class="btn btn-s btn-suc"><i class="fas fa-check"></i>Receber</button></td></tr></tbody></table></div></div></div>
+
+<!-- FLUXO -->
+<div class="mp" id="p-fluxo"><div class="ph"><div class="ph-l"><h2>Fluxo de Caixa</h2></div></div><div class="fs"><div class="fsc inc"><div class="fch"><span class="fct">Entradas</span></div><div class="fcv">R$ 125.680</div></div><div class="fsc exp"><div class="fch"><span class="fct">Saídas</span></div><div class="fcv">R$ 89.230</div></div><div class="fsc bal"><div class="fch"><span class="fct">Saldo</span></div><div class="fcv">R$ 36.450</div></div></div><div class="cd"><div class="cd-h"><span class="cd-t">Movimentações</span></div><div class="cd-b"><div class="cb" style="margin-bottom:24px"><div class="cbr" style="height:70%;background:linear-gradient(to top,var(--s),#34d399)"><span class="brv">R$32k</span><span class="brl">S1↑</span></div><div class="cbr" style="height:55%;background:linear-gradient(to top,var(--d),#f87171)"><span class="brv">R$24k</span><span class="brl">S1↓</span></div><div class="cbr" style="height:85%;background:linear-gradient(to top,var(--s),#34d399)"><span class="brv">R$41k</span><span class="brl">S2↑</span></div><div class="cbr" style="height:60%;background:linear-gradient(to top,var(--d),#f87171)"><span class="brv">R$28k</span><span class="brl">S2↓</span></div></div></div></div></div>
+
+<!-- PEDIDOS -->
+<div class="mp" id="p-pedidos"><div class="ph"><div class="ph-l"><h2>Pedidos</h2></div><div class="pa"><button class="btn btn-p"><i class="fas fa-plus"></i>Novo</button></div></div><div class="sg"><div class="sc bl"><div class="si bl"><i class="fas fa-shopping-bag"></i></div><div class="sn"><h3>156</h3><p>Hoje</p></div></div><div class="sc gr"><div class="si gr"><i class="fas fa-check-double"></i></div><div class="sn"><h3>136</h3><p>Finalizados</p></div></div><div class="sc yl"><div class="si yl"><i class="fas fa-clock"></i></div><div class="sn"><h3>12</h3><p>Preparação</p></div></div></div><div class="cd"><div class="cd-b" style="padding:0"><table><thead><tr><th>Pedido</th><th>Cliente</th><th>Itens</th><th>Valor</th><th>Status</th></tr></thead><tbody><tr><td><strong>#PED-1056</strong></td><td>João Silva</td><td>8</td><td><strong>R$ 356,80</strong></td><td><span class="sb-badge info">Preparando</span></td></tr><tr><td><strong>#PED-1055</strong></td><td>Maria Costa</td><td>3</td><td><strong>R$ 124,50</strong></td><td><span class="sb-badge pending">Em rota</span></td></tr><tr><td><strong>#PED-1054</strong></td><td>Empresa Ltda.</td><td>25</td><td><strong>R$ 2.870</strong></td><td><span class="sb-badge active">Finalizado</span></td></tr></tbody></table></div></div></div>
+
+<!-- OS -->
+<div class="mp" id="p-os"><div class="ph"><div class="ph-l"><h2>Ordens de Serviço</h2></div><div class="pa"><button class="btn btn-p"><i class="fas fa-plus"></i>Nova OS</button></div></div><div class="sg"><div class="sc bl"><div class="si bl"><i class="fas fa-clipboard-list"></i></div><div class="sn"><h3>48</h3><p>Total</p></div></div><div class="sc yl"><div class="si yl"><i class="fas fa-spinner"></i></div><div class="sn"><h3>12</h3><p>Andamento</p></div></div><div class="sc gr"><div class="si gr"><i class="fas fa-check-circle"></i></div><div class="sn"><h3>32</h3><p>Concluídas</p></div></div><div class="sc rd"><div class="si rd"><i class="fas fa-clock"></i></div><div class="sn"><h3>4</h3><p>Atrasadas</p></div></div></div><div class="osc"><div class="osh"><span class="osn">OS #0089</span><span class="sb-badge pending">Em andamento</span></div><div class="osb"><div class="osf"><label>Cliente</label><p>João Silva</p></div><div class="osf"><label>Serviço</label><p>Manutenção</p></div><div class="osf"><label>Valor</label><p style="color:var(--p)">R$ 450</p></div></div><div class="osft"><div style="display:flex;align-items:center;gap:5px"><div class="pb" style="width:130px"><div class="pf bl" style="width:65%"></div></div><span style="font-size:10px;font-weight:700;color:var(--p)">65%</span></div><div style="display:flex;gap:4px"><button class="btn btn-s btn-sec"><i class="fas fa-edit"></i></button><button class="btn btn-s btn-suc"><i class="fas fa-check"></i>Finalizar</button></div></div></div><div class="osc"><div class="osh"><span class="osn">OS #0088</span><span class="sb-badge inactive">Atrasada</span></div><div class="osb"><div class="osf"><label>Cliente</label><p>Empresa Ltda.</p></div><div class="osf"><label>Serviço</label><p>Instalação</p></div><div class="osf"><label>Valor</label><p style="color:var(--p)">R$ 2.350</p></div></div><div class="osft"><div style="display:flex;align-items:center;gap:5px"><div class="pb" style="width:130px"><div class="pf rd" style="width:40%"></div></div><span style="font-size:10px;font-weight:700;color:var(--d)">40%</span></div><button class="btn btn-s btn-suc"><i class="fas fa-check"></i>Finalizar</button></div></div></div>
+
+<!-- FISCAL -->
+<div class="mp" id="p-fiscal"><div class="ph"><div class="ph-l"><h2>Módulo Fiscal</h2></div></div><div class="sg"><div class="sc gr"><div class="si gr"><i class="fas fa-file-circle-check"></i></div><div class="sn"><h3>1.256</h3><p>NF-e</p></div></div><div class="sc bl"><div class="si bl"><i class="fas fa-receipt"></i></div><div class="sn"><h3>3.420</h3><p>NFC-e</p></div></div><div class="sc yl"><div class="si yl"><i class="fas fa-file-export"></i></div><div class="sn"><h3>89</h3><p>NFS-e</p></div></div></div><div class="fcg" style="margin-bottom:18px"><div class="ftc"><div class="fti" style="background:var(--pbg);color:var(--p)"><i class="fas fa-file-invoice"></i></div><h4>NF-e</h4><p>Nota Eletrônica</p></div><div class="ftc"><div class="fti" style="background:var(--sbg);color:var(--s)"><i class="fas fa-receipt"></i></div><h4>NFC-e</h4><p>Consumidor</p></div><div class="ftc"><div class="fti" style="background:var(--wbg);color:var(--warn)"><i class="fas fa-file-lines"></i></div><h4>NFS-e</h4><p>Serviço</p></div><div class="ftc"><div class="fti" style="background:var(--dbg);color:var(--d)"><i class="fas fa-truck"></i></div><h4>CT-e</h4><p>Transporte</p></div></div><div class="cd"><div class="cd-h"><span class="cd-t">Últimas NF</span></div><div class="cd-b" style="padding:0"><table><thead><tr><th>Nº</th><th>Tipo</th><th>Dest.</th><th>Valor</th><th>Status</th><th>Ações</th></tr></thead><tbody><tr><td><strong>5678</strong></td><td>NF-e</td><td>João Silva</td><td><strong>R$ 8.750</strong></td><td><span class="sb-badge active">OK</span></td><td><button class="btn btn-s btn-sec"><i class="fas fa-download"></i></button><button class="btn btn-s btn-inf"><i class="fas fa-print"></i></button></td></tr><tr><td><strong>5677</strong></td><td>NFC-e</td><td>Consumidor</td><td><strong>R$ 356,80</strong></td><td><span class="sb-badge active">OK</span></td><td><button class="btn btn-s btn-sec"><i class="fas fa-download"></i></button></td></tr></tbody></table></div></div></div>
+
+<!-- MULTI-LOJA -->
+<div class="mp" id="p-multi-loja"><div class="ph"><div class="ph-l"><h2><i class="fas fa-store" style="color:var(--p);margin-right:5px"></i>Multi-Loja</h2></div><div class="pa"><button class="btn btn-p"><i class="fas fa-plus"></i>Nova Loja</button></div></div><div class="sg"><div class="sc bl"><div class="si bl"><i class="fas fa-store"></i></div><div class="sn"><h3>3</h3><p>Lojas</p></div></div><div class="sc gr"><div class="si gr"><i class="fas fa-dollar-sign"></i></div><div class="sn"><h3>R$ 148.500</h3><p>Faturamento</p></div></div><div class="sc yl"><div class="si yl"><i class="fas fa-arrow-right-arrow-left"></i></div><div class="sn"><h3>12</h3><p>Transferências</p></div></div></div>
+    <h3 style="font-size:14px;font-weight:700;margin-bottom:10px">Ranking</h3>
+    <div class="sr" style="margin-bottom:18px"><div class="src"><div class="rp" style="background:#fef3c7;color:#d97706">🥇</div><div class="ri"><h4>Loja Centro</h4><p>10 colaboradores</p></div><div class="rv"><h3>R$ 65.200</h3><span>Mês</span></div></div><div class="src"><div class="rp" style="background:var(--g100);color:var(--g600)">🥈</div><div class="ri"><h4>Loja Shopping</h4><p>8 colaboradores</p></div><div class="rv"><h3>R$ 52.800</h3></div></div><div class="src"><div class="rp" style="background:#fed7aa;color:#ea580c">🥉</div><div class="ri"><h4>Loja Bairro</h4><p>6 colaboradores</p></div><div class="rv"><h3>R$ 30.500</h3></div></div></div>
+    <h3 style="font-size:14px;font-weight:700;margin-bottom:10px">Transferir Estoque</h3>
+    <div class="cd"><div class="cd-b"><div class="tf"><div class="tb ab"><i class="fas fa-store" style="font-size:24px;color:var(--p);display:block;margin-bottom:6px"></i><strong>Loja Centro</strong><p style="font-size:11px;color:var(--g500)">Origem</p></div><div class="ta"><i class="fas fa-arrow-right"></i></div><div class="tb"><i class="fas fa-store" style="font-size:24px;color:var(--g400);display:block;margin-bottom:6px"></i><strong>Loja Bairro</strong><p style="font-size:11px;color:var(--g500)">Destino</p></div></div><div class="fr"><div class="fg"><label class="fl">Produto</label><input type="text" class="fc" placeholder="Buscar..."></div><div class="fg"><label class="fl">Qtd</label><input type="number" class="fc" value="10"></div><div class="fg"><label class="fl">Motivo</label><select class="fc"><option>Reposição</option><option>Promoção</option></select></div></div><div style="text-align:right;margin-top:6px"><button class="btn btn-p"><i class="fas fa-exchange-alt"></i>Transferir</button></div></div></div>
+    <div class="cd" style="margin-top:16px"><div class="cd-h"><span class="cd-t">Comparativo</span></div><div class="cd-b"><div class="cb" style="margin-bottom:24px"><div class="cbr" style="height:85%;background:linear-gradient(to top,var(--p),var(--pl))"><span class="brv">R$65k</span><span class="brl">Centro</span></div><div class="cbr" style="height:70%;background:linear-gradient(to top,var(--s),#34d399)"><span class="brv">R$53k</span><span class="brl">Shopping</span></div><div class="cbr" style="height:45%;background:linear-gradient(to top,var(--warn),#fbbf24)"><span class="brv">R$31k</span><span class="brl">Bairro</span></div></div></div></div>
+</div>
+
+<!-- RELATÓRIOS -->
+<div class="mp" id="p-relatorios"><div class="ph"><div class="ph-l"><h2>Relatórios</h2></div></div><div class="tabs"><button class="tab act">Todos</button><button class="tab">Vendas</button><button class="tab">Estoque</button><button class="tab">Financeiro</button><button class="tab">Validade</button><button class="tab">Multi-Loja</button></div><div class="rg"><div class="rc"><div class="rci" style="background:var(--pbg);color:var(--p)"><i class="fas fa-chart-line"></i></div><div class="rcn"><h4>Vendas por Período</h4><p>Análise detalhada</p></div><i class="fas fa-chevron-right rca"></i></div><div class="rc"><div class="rci" style="background:#fff7ed;color:#ea580c"><i class="fas fa-calendar-xmark"></i></div><div class="rcn"><h4>Produtos por Validade</h4><p>Relatório vencimentos</p></div><i class="fas fa-chevron-right rca"></i></div><div class="rc"><div class="rci" style="background:var(--dbg);color:var(--d)"><i class="fas fa-trash"></i></div><div class="rcn"><h4>Perdas por Vencimento</h4><p>Prejuízo com vencidos</p></div><i class="fas fa-chevron-right rca"></i></div><div class="rc"><div class="rci" style="background:var(--sbg);color:var(--s)"><i class="fas fa-ranking-star"></i></div><div class="rcn"><h4>Top Produtos</h4><p>Ranking vendas</p></div><i class="fas fa-chevron-right rca"></i></div><div class="rc"><div class="rci" style="background:var(--wbg);color:var(--warn)"><i class="fas fa-percent"></i></div><div class="rcn"><h4>Margem de Lucro</h4><p>Lucratividade</p></div><i class="fas fa-chevron-right rca"></i></div><div class="rc"><div class="rci" style="background:#ecfeff;color:var(--i)"><i class="fas fa-boxes-stacked"></i></div><div class="rcn"><h4>Posição Estoque</h4><p>Situação atual</p></div><i class="fas fa-chevron-right rca"></i></div><div class="rc"><div class="rci" style="background:var(--pbg);color:var(--p)"><i class="fas fa-money-bill-trend-up"></i></div><div class="rcn"><h4>Fluxo de Caixa</h4><p>Entradas e saídas</p></div><i class="fas fa-chevron-right rca"></i></div><div class="rc"><div class="rci" style="background:var(--wbg);color:var(--warn)"><i class="fas fa-store"></i></div><div class="rcn"><h4>Performance Lojas</h4><p>Comparativo</p></div><i class="fas fa-chevron-right rca"></i></div><div class="rc"><div class="rci" style="background:#f5f3ff;color:#8b5cf6"><i class="fas fa-chart-pie"></i></div><div class="rcn"><h4>DRE Simplificado</h4><p>Resultados</p></div><i class="fas fa-chevron-right rca"></i></div><div class="rc"><div class="rci" style="background:var(--dbg);color:var(--d)"><i class="fas fa-user-clock"></i></div><div class="rcn"><h4>Inadimplência</h4><p>Clientes em atraso</p></div><i class="fas fa-chevron-right rca"></i></div><div class="rc"><div class="rci" style="background:var(--sbg);color:var(--s)"><i class="fas fa-clipboard-list"></i></div><div class="rcn"><h4>Ordens de Serviço</h4><p>OS por período</p></div><i class="fas fa-chevron-right rca"></i></div><div class="rc"><div class="rci" style="background:var(--pbg);color:var(--p)"><i class="fas fa-file-contract"></i></div><div class="rcn"><h4>Notas Fiscais</h4><p>NF-e, NFC-e, NFS-e</p></div><i class="fas fa-chevron-right rca"></i></div></div></div>
+
+<!-- RH -->
+<div class="mp" id="p-rh"><div class="ph"><div class="ph-l"><h2>Colaboradores</h2></div><div class="pa"><button class="btn btn-p"><i class="fas fa-user-plus"></i>Novo</button></div></div><div class="sg"><div class="sc bl"><div class="si bl"><i class="fas fa-users"></i></div><div class="sn"><h3>24</h3><p>Total</p></div></div><div class="sc gr"><div class="si gr"><i class="fas fa-user-check"></i></div><div class="sn"><h3>22</h3><p>Ativos</p></div></div><div class="sc yl"><div class="si yl"><i class="fas fa-umbrella-beach"></i></div><div class="sn"><h3>2</h3><p>Férias</p></div></div></div><div class="emc"><div class="ema"><i class="fas fa-user"></i></div><div style="flex:1"><h4 style="font-size:13px;font-weight:700">Carlos Eduardo</h4><p style="font-size:11px;color:var(--g500)">Técnico • Loja Centro</p></div><span class="sb-badge active">Ativo</span><button class="btn btn-s btn-sec" style="margin-left:8px"><i class="fas fa-edit"></i></button></div><div class="emc"><div class="ema"><i class="fas fa-user"></i></div><div style="flex:1"><h4 style="font-size:13px;font-weight:700">Ana Lima</h4><p style="font-size:11px;color:var(--g500)">Consultora • Loja Shopping</p></div><span class="sb-badge active">Ativo</span><button class="btn btn-s btn-sec" style="margin-left:8px"><i class="fas fa-edit"></i></button></div><div class="emc"><div class="ema"><i class="fas fa-user"></i></div><div style="flex:1"><h4 style="font-size:13px;font-weight:700">Pedro Santos</h4><p style="font-size:11px;color:var(--g500)">Eletricista • Loja Bairro</p></div><span class="sb-badge pending">Férias</span><button class="btn btn-s btn-sec" style="margin-left:8px"><i class="fas fa-edit"></i></button></div><div class="emc"><div class="ema"><i class="fas fa-user"></i></div><div style="flex:1"><h4 style="font-size:13px;font-weight:700">Fernanda Oliveira</h4><p style="font-size:11px;color:var(--g500)">Caixa • Loja Centro</p></div><span class="sb-badge active">Ativo</span><button class="btn btn-s btn-sec" style="margin-left:8px"><i class="fas fa-edit"></i></button></div></div>
+
+<!-- CONFIG -->
+<div class="mp" id="p-config"><div class="ph"><div class="ph-l"><h2>Configurações</h2></div></div>
+    <div class="cfs"><div class="cfh"><i class="fas fa-building"></i><h3>Empresa</h3></div><div class="cfi"><div class="cin"><h4>Razão Social</h4><p>ConversaAI Comércio Ltda.</p></div><button class="btn btn-s btn-sec"><i class="fas fa-edit"></i></button></div><div class="cfi"><div class="cin"><h4>CNPJ</h4><p>12.345.678/0001-99</p></div><button class="btn btn-s btn-sec"><i class="fas fa-edit"></i></button></div></div>
+    <div class="cfs"><div class="cfh"><i class="fas fa-calendar-xmark" style="color:#ea580c"></i><h3>Alertas de Validade</h3></div><div class="cfi"><div class="cin"><h4>Período de alerta</h4><p>Dias antes do vencimento</p></div><select class="fc" style="width:110px"><option>7 dias</option><option>15 dias</option><option selected>30 dias</option><option>60 dias</option></select></div><div class="cfi"><div class="cin"><h4>Notificar por email</h4><p>Alerta diário de vencimentos</p></div><label class="sw"><input type="checkbox" checked><span class="sl"></span></label></div><div class="cfi"><div class="cin"><h4>Bloquear venda de vencido</h4><p>Impedir no PDV</p></div><label class="sw"><input type="checkbox" checked><span class="sl"></span></label></div><div class="cfi"><div class="cin"><h4>Sugerir promoção</h4><p>Automático a 7 dias do vencimento</p></div><label class="sw"><input type="checkbox" checked><span class="sl"></span></label></div></div>
+    <div class="cfs"><div class="cfh"><i class="fas fa-gear"></i><h3>Geral</h3></div><div class="cfi"><div class="cin"><h4>Impressão Automática</h4><p>Imprimir ao finalizar</p></div><label class="sw"><input type="checkbox" checked><span class="sl"></span></label></div><div class="cfi"><div class="cin"><h4>Tema Escuro</h4><p>Modo escuro</p></div><label class="sw"><input type="checkbox"><span class="sl"></span></label></div></div>
+    <div class="cfs"><div class="cfh"><i class="fas fa-file-invoice"></i><h3>Fiscal</h3></div><div class="cfi"><div class="cin"><h4>Certificado Digital</h4><p>A1 — Válido até 15/06/2025</p></div><button class="btn btn-s btn-p"><i class="fas fa-upload"></i>Atualizar</button></div><div class="cfi"><div class="cin"><h4>Ambiente</h4><p>SEFAZ</p></div><select class="fc" style="width:140px"><option>Produção</option><option>Homologação</option></select></div></div>
+    <div class="cfs"><div class="cfh"><i class="fas fa-shield-halved"></i><h3>Segurança</h3></div><div class="cfi"><div class="cin"><h4>Alterar Senha</h4><p>Última: 30/12/24</p></div><button class="btn btn-s btn-war"><i class="fas fa-key"></i>Alterar</button></div><div class="cfi"><div class="cin"><h4>Backup Automático</h4><p>Diário 00:00h</p></div><label class="sw"><input type="checkbox" checked><span class="sl"></span></label></div></div>
+</div>
+
+</main>
+</div>
+
+<!-- MODAL PRODUTO -->
+<div class="mo" id="mp"><div class="mdl" style="max-width:640px"><div class="mdl-h"><h3><i class="fas fa-plus-circle" style="color:var(--p);margin-right:5px"></i>Novo Produto</h3><button class="mdl-c" onclick="closeMdl('mp')"><i class="fas fa-times"></i></button></div><div class="mdl-b"><div class="fr"><div class="fg"><label class="fl">Código de Barras</label><div class="ig"><input type="text" class="fc" placeholder="7891234567890"><button class="ig-btn"><i class="fas fa-barcode"></i></button></div></div><div class="fg"><label class="fl">Cód Interno</label><input type="text" class="fc" value="#007" readonly style="background:var(--g100)"></div></div><div class="fg"><label class="fl">Nome *</label><input type="text" class="fc" placeholder="Ex: Arroz Tipo 1 - 5kg"></div><div class="fr"><div class="fg"><label class="fl">Categoria</label><select class="fc"><option>Alimentos</option><option>Laticínios</option><option>Bebidas</option><option>Limpeza</option></select></div><div class="fg"><label class="fl">Unidade</label><select class="fc"><option>UN</option><option>KG</option><option>LT</option></select></div></div><div class="fr"><div class="fg"><label class="fl">Preço Custo *</label><input type="text" class="fc" placeholder="R$ 0,00"></div><div class="fg"><label class="fl">Preço Venda *</label><input type="text" class="fc" placeholder="R$ 0,00"></div><div class="fg"><label class="fl">Estoque</label><input type="number" class="fc" value="0"></div></div><div class="fr"><div class="fg"><label class="fl">📅 Data Validade</label><input type="date" class="fc" style="font-weight:600"></div><div class="fg"><label class="fl">Lote</label><input type="text" class="fc" placeholder="LT-2025-001"></div><div class="fg"><label class="fl">Est. Mínimo</label><input type="number" class="fc" value="10"></div></div><div class="fr"><div class="fg"><label class="fl">Preço Atacado (10+)</label><input type="text" class="fc" placeholder="R$ 0,00"></div><div class="fg"><label class="fl">Loja</label><select class="fc"><option>Todas</option><option>Loja Centro</option><option>Loja Shopping</option><option>Loja Bairro</option></select></div></div></div><div class="mdl-f"><button class="btn btn-sec" onclick="closeMdl('mp')">Cancelar</button><button class="btn btn-p" onclick="closeMdl('mp');toast('✅ Produto cadastrado!','ts')"><i class="fas fa-save"></i>Salvar</button></div></div></div>
+
+<!-- TOAST -->
+<div class="tc" id="tc"></div>
+
+<script>
+function doLogin(e){e.preventDefault();const b=e.target.querySelector('.login-btn');b.innerHTML='<i class="fas fa-spinner fa-spin" style="margin-right:5px"></i>Entrando...';setTimeout(()=>{document.getElementById('ls').classList.add('hidden');document.getElementById('app').classList.add('vis');toast('Bem-vindo ao ConversaAI!','ts');setTimeout(()=>toast('⚠️ 11 produtos com alerta de validade!','tw'),2e3)},1200)}
+function doOut(){if(confirm('Sair?')){document.getElementById('app').classList.remove('vis');setTimeout(()=>{const l=document.getElementById('ls');l.classList.remove('hidden');l.querySelector('.login-btn').innerHTML='<i class="fas fa-sign-in-alt" style="margin-right:5px"></i>Entrar no Sistema'},300)}}
+function togSb(){document.getElementById('sb').classList.toggle('c');document.getElementById('mn').classList.toggle('exp')}
+function togSub(l,id){const s=document.getElementById(id),o=s.classList.contains('open');document.querySelectorAll('.sb-sub').forEach(x=>x.classList.remove('open'));document.querySelectorAll('.sb-a').forEach(x=>x.classList.remove('exp'));if(!o){s.classList.add('open');l.classList.add('exp')}}
+function nav(p,l){document.querySelectorAll('.mp').forEach(x=>x.classList.remove('act'));const t=document.getElementById('p-'+p);if(t)t.classList.add('act');if(l){document.querySelectorAll('.sb-a').forEach(x=>x.classList.remove('act'));if(l.classList)l.classList.add('act')}if(p==='pdv')setTimeout(()=>{const i=document.getElementById('bi');if(i)i.focus()},300);if(p==='consulta-preco')setTimeout(()=>{const i=document.getElementById('pci');if(i)i.focus()},300);document.getElementById('gsrr').classList.remove('show')}
+function gss(v){const r=document.getElementById('gsrr');v.length>0?r.classList.add('show'):r.classList.remove('show')}
+function togNotif(){document.getElementById('ndd').classList.toggle('show')}
+document.addEventListener('click',e=>{if(!e.target.closest('.hdr-btn'))document.getElementById('ndd').classList.remove('show')})
+document.querySelectorAll('.pmb').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('.pmb').forEach(x=>x.classList.remove('sel'));b.classList.add('sel')})})
+document.querySelectorAll('.tabs').forEach(t=>{t.querySelectorAll('.tab').forEach(b=>{b.addEventListener('click',()=>{t.querySelectorAll('.tab').forEach(x=>x.classList.remove('act'));b.classList.add('act')})})})
+function cTroco(v){const r=parseFloat(v.replace(',','.'))||0,t=115.27,c=r-t;document.getElementById('tv').textContent=c>=0?'R$ '+c.toFixed(2).replace('.',','):'-R$ '+Math.abs(c).toFixed(2).replace('.',',');document.getElementById('tv').style.color=c>=0?'var(--s)':'var(--d)'}
+function finSale(){toast('✅ Venda #1046 finalizada — R$ 115,27','ts')}
+function chkPrice(){if(document.getElementById('pci').value.length>0){document.getElementById('prr').classList.add('show');toast('Produto encontrado!','tif')}}
+function chBranch(v){const n={all:'Todas',l1:'Loja Centro',l2:'Loja Shopping',l3:'Loja Bairro'},e=document.getElementById('cbn');if(e)e.textContent=n[v];toast('Filial: '+n[v],'tif')}
+function toast(m,t='ts'){const c=document.getElementById('tc'),i={ts:'fa-check-circle',te:'fa-times-circle',tw:'fa-exclamation-triangle',tif:'fa-info-circle'},cl={ts:'var(--s)',te:'var(--d)',tw:'var(--warn)',tif:'var(--p)'},bg={ts:'var(--sbg)',te:'var(--dbg)',tw:'var(--wbg)',tif:'var(--pbg)'},d=document.createElement('div');d.className='tst '+t;d.innerHTML=`<div class="tic" style="background:${bg[t]};color:${cl[t]}"><i class="fas ${i[t]}"></i></div><div class="ttx">${m}</div><button class="tcl" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>`;c.appendChild(d);setTimeout(()=>{d.style.opacity='0';d.style.transform='translateX(30px)';setTimeout(()=>d.remove(),300)},4e3)}
+function openMdl(id){document.getElementById(id).classList.add('act')}
+function closeMdl(id){document.getElementById(id).classList.remove('act')}
+document.querySelectorAll('.mo').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('act')})})
+document.addEventListener('keydown',e=>{if(e.key==='F2'){e.preventDefault();nav('pdv')}if(e.key==='F7'){e.preventDefault();nav('consulta-preco')}if(e.key==='F12'&&document.getElementById('p-pdv').classList.contains('act')){e.preventDefault();finSale()}if(e.key==='Escape')document.querySelectorAll('.mo.act').forEach(m=>m.classList.remove('act'));if(e.ctrlKey&&e.key==='k'){e.preventDefault();document.getElementById('gsi').focus()}})
+</script>
+</body>
+</html>
